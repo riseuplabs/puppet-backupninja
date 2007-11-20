@@ -1,0 +1,2 @@
+class null_class {
+}

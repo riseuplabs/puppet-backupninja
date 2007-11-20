@@ -1,0 +1,32 @@
+Backupninja Module
+-------------------
+
+Configure Backupninja handlers via Puppet.
+
+Simply include backupninja (to make sure you've got the package installed)
+then configure backupninja:
+
+backupninja::config { conf:
+	loglvl => 3,
+	usecolors => false
+}
+
+And setup your handlers:
+
+backupninja::mysql { all_databases:
+	user => root,
+	backupdir => '/var/backups',
+	compress => true,
+	sqldump => true
+}
+
+backupninja::rdiff { backup_all:
+	directory => '/media/backupdisk',
+	include => ['/var/backups', '/home', '/var/lib/dpkg/status'],
+	exclude => '/home/*/.gnupg'
+}
+
+At the moment, only the mysql and rdiff handlers have types defined for
+them, as they're the only handlers we currently use at Solutions First. 
+Writing others is fairly simple; feel free to contribute them, or ask really
+nicely and we might have a bit a free time.
