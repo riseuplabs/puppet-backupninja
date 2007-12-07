@@ -11,6 +11,7 @@ define backupninja::config($configfile = '/etc/backupninja.conf',
                             $logfile = '/var/log/backupninja.log',
                             $configdir = '/etc/backup.d',
                             $scriptdir = '/usr/share/backupninja',
+                            $libdir = '/usr/lib/backupninja',
                             $usecolors = true
              ) {
 	file { $configfile:
