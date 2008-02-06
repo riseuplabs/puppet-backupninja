@@ -11,10 +11,10 @@
 #      (but be sure to keep the configdir, name, and order the same, so
 #      that we can find the correct file to remove).
 #
-#   user, dbusername, dbpassword, dbhost, databases, backupdir, hotcopy,
-#   sqldump, compress: As defined in the backupninja documentation, with the
-#      caveat that hotcopy, sqldump, and compress take true/false rather
-#      than yes/no.
+#   user, dbusername, dbpassword, dbhost, databases, backupdir,
+#   hotcopy, sqldump, compress, configfile: As defined in the
+#   backupninja documentation, with the caveat that hotcopy, sqldump,
+#   and compress take true/false rather than yes/no.
 # 
 define backupninja::mysql($configdir = '/etc/backup.d',
                            $order = 10,
@@ -27,7 +27,8 @@ define backupninja::mysql($configdir = '/etc/backup.d',
                            $backupdir = false,
                            $hotcopy = false,
                            $sqldump = false,
-                           $compress = false
+                           $compress = false,
+                           $configfile = '/etc/mysql/debian.cnf'
                           ) {
 	# Make sure the directory that the config goes into exists already
 	if defined(File["${configdir}"]) {
