@@ -1,2 +1,0 @@
-class null_class {
-}

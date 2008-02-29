@@ -2,8 +2,6 @@
 #
 # Valid attributes for this type are:
 #
-#   configdir: The directory to write the handler config file into.
-#
 #   order: The prefix to give to the handler config filename, to set
 #      order in which the actions are executed during the backup run.
 #
@@ -17,36 +15,31 @@
 #      options should be given as arrays if you want to specify multiple
 #      directories.
 # 
-define backupninja::rdiff($configdir = '/etc/backup.d',
-                           $order = 90,
+define backupninja::rdiff($order = 90,
                            $ensure = present,
                            $user = false,
                            $directory = false,
                            $host = false,
                            $type = 'local',
-                           $exclude = false,
-                           $include = false,
+                           $exclude = [ "/home/*/.gnupg", "/home/*/.local/share/Trash", "/home/*/.Trash", "/home/*/.thumbnails", "/home/*/.beagle", "/home/*/.aMule", "/home/*/gtk-gnutella-downloads" ],
+                           $include = [ "/var/spool/cron/crontabs", "/var/backups", "/etc", "/root", "/home", "/usr/local/*bin", "/var/lib/dpkg/status*" ],
                            $keep = 30,
                            $sshoptions = false,
                            $options = false
                           ) {
-	# Make sure the directory that the config goes into exists already
-	if defined(File["${configdir}"]) {
-		# Yay for a lack of a negation operator, and the inability
-		# to provide empty blocks
-		include null_class
-	} else {
-		file { $configdir:
-			ensure => directory
+	include backupninja::client
+	case $type {
+	        'remote': {
+			case $host { false: { err("need to define a host for remote backups!") } }
+		        backupninja::server::sandbox { $user: host => $host, dir => $directory }
 		}
 	}
-
-	file { "${configdir}/${order}_${name}.rdiff":
+	file { "${backupninja::client::configdir}/${order}_${name}.rdiff":
 		ensure => $ensure,
 		content => template('backupninja/rdiff.conf.erb'),
 		owner => root,
 		group => root,
 		mode => 0600,
-		require => File["${configdir}"]
+		require => File["${backupninja::client::configdir}"]
 	}
 }
