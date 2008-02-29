@@ -24,22 +24,22 @@ define backupninja::labelmount($order = 10,
                                $dest
                               ) {
 	include backupninja::client
-	file { "${backup::client::configdir}/${order}_${name}.labelmount":
+	file { "${backupninja::client::configdir}/${order}_${name}.labelmount":
 		ensure => $ensure,
 		content => template('backupninja/labelmount.conf.erb'),
 		owner => root,
 		group => root,
 		mode => 0600,
-		require => File["${backup::client::configdir}"]
+		require => File["${backupninja::client::configdir}"]
 	}
 
-	file { "${backup::client::configdir}/99_${name}.umount":
+	file { "${backupninja::client::configdir}/99_${name}.umount":
 		ensure => $ensure,
 		content => template('backupninja/umount.conf.erb'),
 		owner => root,
 		group => root,
 		mode => 0600,
-		require => File["${backup::client::configdir}"]
+		require => File["${backupninja::client::configdir}"]
 	}
 	
 	# Copy over the handler scripts themselves, since they're not in the

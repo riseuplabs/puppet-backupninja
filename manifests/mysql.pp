@@ -28,7 +28,7 @@ define backupninja::mysql($order = 10,
                            $configfile = '/etc/mysql/debian.cnf'
                           ) {
         include backupninja::client
-	file { "${backup::client::configdir}/${order}_${name}.mysql":
+	file { "${backupninja::client::configdir}/${order}_${name}.mysql":
 		ensure => $ensure,
 		content => template('backupninja/mysql.conf.erb'),
 		owner => root,
