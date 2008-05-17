@@ -22,6 +22,7 @@ define backupninja::sys($order = 30,
                            $hardwarefile = '/var/backups/hardware.txt',
                            $dohwinfo = yes
                           ) {
+                          include backupninja::client
 	file { "${backupninja::client::configdir}/${order}_${name}.sys":
 		ensure => $ensure,
 		content => template('backupninja/sys.conf.erb'),

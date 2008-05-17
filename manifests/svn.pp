@@ -17,6 +17,7 @@ define backupninja::svn($order = 20,
                            $tmp = '/var/backups/svn.tmp',
                            $vsname = false
                           ) {
+                          include backupninja::client
 	file { "${backupninja::client::configdir}/${order}_${name}.svn":
 		ensure => $ensure,
 		content => template('backupninja/svn.conf.erb'),
