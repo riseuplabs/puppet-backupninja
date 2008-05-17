@@ -9,10 +9,6 @@
 #      (but be sure to keep the configdir, name, and order the same, so
 #      that we can find the correct file to remove).
 #
-#   user, dbusername, dbpassword, dbhost, databases, backupdir,
-#   hotcopy, sqldump, compress, configfile: As defined in the
-#   backupninja documentation, with the caveat that hotcopy, sqldump,
-#   and compress take true/false rather than yes/no.
 # 
 define backupninja::svn($order = 20,
                            $ensure = present,
