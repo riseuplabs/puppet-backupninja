@@ -20,7 +20,7 @@ define backupninja::sys($order = 30,
                            $dosfdisk = yes,
                            $hardware = yes,
                            $hardwarefile = '/var/backups/hardware.txt',
-                           $dohwinfo = yes,
+                           $dohwinfo = yes
                           ) {
 	file { "${backupninja::client::configdir}/${order}_${name}.sys":
 		ensure => $ensure,

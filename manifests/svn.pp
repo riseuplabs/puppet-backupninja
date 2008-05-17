@@ -15,7 +15,7 @@ define backupninja::svn($order = 20,
                            $src = '/var/lib/svn',
                            $dest = '/var/backups/svn',
                            $tmp = '/var/backups/svn.tmp',
-                           $vsname = false,
+                           $vsname = false
                           ) {
 	file { "${backupninja::client::configdir}/${order}_${name}.svn":
 		ensure => $ensure,
