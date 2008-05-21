@@ -3,7 +3,7 @@ class backupninja::server {
     '' => "/backup",
     default => $backupdir,
   }
-  $real_backupserver_tag = $backupserver_tag? {
+  $real_backupserver_tag = $backupserver_tag ? {
     '' => $fqdn,
     default => $backupserver_tag
   }
