@@ -3,6 +3,10 @@ class backupninja::server {
     '' => "/backup",
     default => $backupdir_override,
   }
+  $backupkeys = $backupkeys_override ? {
+    '' => "$fileserver/keys/backupkeys",
+    default => $backupkeys_override,
+  }
   group { "backupninjas":
     ensure => "present",
     gid => 700
@@ -25,11 +29,29 @@ class backupninja::server {
       false => "${backupninja::server::backupdir}/$fqdn",
       default => $dir,
     }
+    $real_backupkeys = $backupkeys ? {
+      false => "${backupninja::server::backupkeys}",
+      default => $backupkeys,
+    }
     @@file { "$real_dir":
-      ensure => "directory",
+      ensure => directory,
       mode => 750, owner => $name, group => 0,
       tag => "backupninja-$real_host",
     }
+    @@file { "$real_dir/.ssh":
+      ensure => directory,
+      mode => 700, owner => $name, group => 0,
+      require => File["$real_dir"],
+      tag => "backupninja-$real_host",
+    }
+    @@file { "$real_dir/.ssh/authorized_keys":
+      ensure => present,
+      mode => 644, owner => 0, group => 0,
+      source => "$real_backupkeys/${name}_id_rsa.pub",
+      require => File["$real_dir/.ssh"],
+      tag => "backupninja-$real_host",
+    }
+    
     case $uid {
       false: {
         @@user { "$name":
