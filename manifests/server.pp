@@ -3,10 +3,6 @@ class backupninja::server {
     '' => "/backup",
     default => $backupdir,
   }
-  $real_backupkeys = $backupkeys ? {
-    '' => "$fileserver/keys/backupkeys",
-    default => $backupkeys,
-  }
   $real_backupserver_tag = $backupserver_tag? {
     '' => $fqdn,
     default => $backupserver_tag
@@ -24,18 +20,18 @@ class backupninja::server {
 
   # this define allows nodes to declare a remote backup sandbox, that have to
   # get created on the server
-  define sandbox($host = false, $dir = false, $keys = false, $uid = false, $gid = "backupninjas") {
+  define sandbox($host = false, $dir = false, $backupkeys = false, $uid = false, $gid = "backupninjas") {
     $real_host = $host ? {
       false => $fqdn,
       default => $host,
     }
+    $real_backupkeys = $backupkeys ? {
+      false => "$fileserver/keys/backupkeys",
+      default => $backupkeys,
+    }
     $real_dir = $dir ? {
       false => "${backupninja::server::real_backupdir}/$fqdn",
       default => $dir,
-    }
-    $real_keys = $keys ? {
-      false => "${backupninja::server::real_backupkeys}",
-      default => $keys,
     }
     @@file { "$real_dir":
       ensure => directory,
