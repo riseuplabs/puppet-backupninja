@@ -32,7 +32,7 @@ define backupninja::rdiff($order = 90,
 	        'remote': {
 			case $host { false: { err("need to define a host for remote backups!") } }
 		        backupninja::server::sandbox { $user: host => $host, dir => $directory }
-                        backupninja::client::key { $user }
+                        backupninja::client::key { $user: }
 		}
 	}
 	file { "${backupninja::client::configdir}/${order}_${name}.rdiff":
