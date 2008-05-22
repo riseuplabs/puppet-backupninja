@@ -27,7 +27,6 @@ class backupninja::client {
     '' => 'doit',
     default => $keymanage
   }
-  err("$real_keystore $real_keytype $real_keydestination $real_keyowner $real_keygroup $real_keymanage")
   package { 'backupninja':
     ensure => '0.9.5-3';
   }
