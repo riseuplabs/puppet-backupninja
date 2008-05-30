@@ -34,10 +34,6 @@ class backupninja::server {
       false => $fqdn,
       default => $host,
     }
-    $install_user = $installuser ? {
-      false => "${backupninja::server::real_usermanage}",
-      default => $installuser,
-    }
     $real_backupkeys = $backupkeys ? {
       false => "$fileserver/keys/backupkeys",
       default => $backupkeys,
