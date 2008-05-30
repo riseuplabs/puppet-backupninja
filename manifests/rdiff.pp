@@ -31,7 +31,7 @@ define backupninja::rdiff($order = 90,
 	case $type {
 	        'remote': {
 			case $host { false: { err("need to define a host for remote backups!") } }
-		        backupninja::server::sandbox { $user: host => $host, dir => $directory }
+		        backupninja::server::sandbox { $user-$name: user => $user, host => $host, dir => $directory }
                         backupninja::client::key { $user: }
 		}
 	}
