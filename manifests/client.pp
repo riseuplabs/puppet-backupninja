@@ -33,8 +33,16 @@ class backupninja::client {
   file { $configdir:
     ensure => directory
   }
-  define key ( $host=$user, $installkeys=false, $keyowner=false, $keygroup=false, $keystore=false, $keytype=false )
+  define key ( $user = false, $host = false, $installkeys=false, $keyowner=false, $keygroup=false, $keystore=false, $keytype=false )
   {
+    $real_user = $user ? {
+      false => $name,
+      default => $user
+    }
+    $real_host = $host ? {
+      false => $user,
+      default => $host
+    }
     $install_keys = $installkeys ? {
     	false => "${backupninja::client::real_keymanage}",
 	default => $installkeys,
@@ -64,7 +72,7 @@ class backupninja::client {
           mode => 700, owner => $key_owner, group => $key_group,
         }
         file { "${backupninja::client::real_keydestination}/id_${key_type}":
-          source => "${key_store}/${host}_id_${key_type}",
+          source => "${key_store}/${real_user}_id_${key_type}",
           mode => 0400, owner => $key_owner, group => $key_group,
           require => File["${backupninja::client::real_keydestination}"],
         }

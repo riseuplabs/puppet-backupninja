@@ -25,14 +25,15 @@ define backupninja::rdiff($order = 90,
                            $include = [ "/var/spool/cron/crontabs", "/var/backups", "/etc", "/root", "/home", "/usr/local/*bin", "/var/lib/dpkg/status*" ],
                            $keep = 30,
                            $sshoptions = false,
-                           $options = false
+                           $options = false,
+                           $installkeys = true
                           ) {
 	include backupninja::client
 	case $type {
 	        'remote': {
 			case $host { false: { err("need to define a host for remote backups!") } }
-		        backupninja::server::sandbox { $user-$name: user => $user, host => $host, dir => $directory }
-                        backupninja::client::key { $user: }
+		        backupninja::server::sandbox { "${user}-${name}": user => $user, host => $host, dir => $directory }
+                        backupninja::client::key { "${user}-${name}": user => $user, host => $host, installkeys => $installkeys }
 		}
 	}
 	file { "${backupninja::client::configdir}/${order}_${name}.rdiff":

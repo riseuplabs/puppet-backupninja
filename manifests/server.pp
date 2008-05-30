@@ -40,26 +40,26 @@ class backupninja::server {
     }
     @@file { "$real_dir":
       ensure => directory,
-      mode => 750, owner => $name, group => 0,
+      mode => 750, owner => $user, group => 0,
       tag => "backupninja-$real_host",
     }
     @@file { "$real_dir/.ssh":
       ensure => directory,
-      mode => 700, owner => $name, group => 0,
+      mode => 700, owner => $user, group => 0,
       require => File["$real_dir"],
       tag => "backupninja-$real_host",
     }
     @@file { "$real_dir/.ssh/authorized_keys":
       ensure => present,
       mode => 644, owner => 0, group => 0,
-      source => "$real_backupkeys/${name}_id_rsa.pub",
+      source => "$real_backupkeys/${user}_id_rsa.pub",
       require => File["$real_dir/.ssh"],
       tag => "backupninja-$real_host",
     }
     
     case $uid {
       false: {
-        @@user { "$name":
+        @@user { "$user":
           ensure  => "present",
           gid     => "$gid",
           comment => "$name backup sandbox",
@@ -72,7 +72,7 @@ class backupninja::server {
         }
       }
       default: {
-        @@user { "$name":
+        @@user { "$user":
           ensure  => "present",
           uid     => "$uid",
           gid     => "$gid",
