@@ -24,7 +24,7 @@ class backupninja::server {
 
   # this define allows nodes to declare a remote backup sandbox, that have to
   # get created on the server
-  define sandbox($user = false, $host = false, $installuser=false, $dir = false, $backupkeys = false, $uid = false, $gid = "backupninjas") {
+  define sandbox($user = false, $host = false, $installuser = true, $dir = false, $backupkeys = false, $uid = false, $gid = "backupninjas") {
     $real_user = $name ? {
       false => $name,
       default => $user,
@@ -47,8 +47,8 @@ class backupninja::server {
       mode => 750, owner => $user, group => 0,
       tag => "backupninja-$real_host",
     }
-    case $install_user {
-      'doit': {
+    case $installuser {
+      true: {
         @@file { "$real_dir/.ssh":
           ensure => directory,
           mode => 700, owner => $user, group => 0,
@@ -62,7 +62,7 @@ class backupninja::server {
           require => File["$real_dir/.ssh"],
           tag => "backupninja-$real_host",
         }
-    
+        
         case $uid {
           false: {
             @@user { "$user":
