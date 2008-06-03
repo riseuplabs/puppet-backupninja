@@ -27,13 +27,14 @@ define backupninja::rdiff($order = 90,
                            $sshoptions = false,
                            $options = false,
                            $installuser = true,
-                           $installkey = true
+                           $installkey = true,
+                           $backuptag = false
                           ) {
 	include backupninja::client
 	case $type {
 	        'remote': {
 			case $host { false: { err("need to define a host for remote backups!") } }
-		        backupninja::server::sandbox { "${user}-${name}": user => $user, host => $host, dir => $directory, installuser => $installuser }
+		        backupninja::server::sandbox { "${user}-${name}": user => $user, host => $host, dir => $directory, installuser => $installuser, backuptag => $backuptag }
                         backupninja::client::key { "${user}-${name}": user => $user, host => $host, installkey => $installkey }
 		}
 	}

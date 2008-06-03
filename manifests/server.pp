@@ -24,7 +24,7 @@ class backupninja::server {
 
   # this define allows nodes to declare a remote backup sandbox, that have to
   # get created on the server
-  define sandbox($user = false, $host = false, $installuser = true, $dir = false, $backupkeys = false, $uid = false, $gid = "backupninjas") {
+  define sandbox($user = false, $host = false, $installuser = true, $dir = false, $backupkeys = false, $uid = false, $gid = "backupninjas", $backuptag = false) {
     $real_user = $name ? {
       false => $name,
       default => $user,
@@ -42,10 +42,15 @@ class backupninja::server {
       false => "${backupninja::server::real_backupdir}/$fqdn",
       default => $dir,
     }
+    $real_backuptag = $backuptag ? {
+      false => "backupninja-$real_host",
+      default => $backuptag,
+    }
+      
     @@file { "$real_dir":
       ensure => directory,
       mode => 750, owner => $user, group => 0,
-      tag => "backupninja-$real_host",
+      tag => "$real_backuptag",
     }
     case $installuser {
       true: {
@@ -53,14 +58,14 @@ class backupninja::server {
           ensure => directory,
           mode => 700, owner => $user, group => 0,
           require => File["$real_dir"],
-          tag => "backupninja-$real_host",
+          tag => "$real_backuptag",
         }
         @@file { "$real_dir/.ssh/authorized_keys":
           ensure => present,
           mode => 644, owner => 0, group => 0,
           source => "$real_backupkeys/${user}_id_rsa.pub",
           require => File["$real_dir/.ssh"],
-          tag => "backupninja-$real_host",
+          tag => "$real_backuptag",
         }
         
         case $uid {
@@ -74,7 +79,7 @@ class backupninja::server {
               shell   => "/bin/sh",
               password => '*',
               require => Group['backupninjas'],
-              tag => "backupninja-$real_host"
+              tag => "$real_backuptag"
             }
           }
           default: {
@@ -88,7 +93,7 @@ class backupninja::server {
               shell   => "/bin/sh",
               password => '*',
               require => Group['backupninjas'],
-              tag => "backupninja-$real_host"
+              tag => "$real_backuptag"
             }
           }
         }
