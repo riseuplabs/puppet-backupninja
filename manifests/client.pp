@@ -24,7 +24,7 @@ class backupninja::client {
     default => $keygroup,
   }
   $real_keymanage = $keymanage ? {
-    '' => 'doit',
+    '' => true,
     default => $keymanage
   }
   package { 'backupninja':
@@ -65,7 +65,7 @@ class backupninja::client {
     }
 
     case $install_key {
-      'doit': {
+      true: {
         file { "${backupninja::client::real_keydestination}":
           ensure => directory,
           mode => 700, owner => $key_owner, group => $key_group,
