@@ -26,7 +26,7 @@ define backupninja::mysql($order = 10,
                            $sqldump = false,
                            $compress = false,
                            $configfile = '/etc/mysql/debian.cnf',
-                           $vserver = false
+                           $vsname = false
                           ) {
                           include backupninja::client
 	file { "${backupninja::client::configdir}/${order}_${name}.mysql":
