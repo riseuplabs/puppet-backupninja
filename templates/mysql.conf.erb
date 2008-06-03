@@ -3,7 +3,7 @@
 # the next time Puppet runs.  Please make configuration changes to this
 # service in Puppet.
 
-<% %w{user dbusername dbpassword dbhost databases backupdir}.each do |v|
+<% %w{user dbusername dbpassword dbhost databases backupdir vsname}.each do |v|
 	if send(v)
 		-%><%= v + ' = ' + send(v) + "\n" %><%
 	end
