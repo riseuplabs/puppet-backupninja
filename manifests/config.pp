@@ -16,7 +16,7 @@ define backupninja::config($configfile = '/etc/backupninja.conf',
                             $scriptdir = '/usr/share/backupninja',
                             $libdir = '/usr/lib/backupninja',
                             $usecolors = true,
-                            $vserver = false
+                            $vservers = false
              ) {
 	file { $configfile:
 		content => template('backupninja/backupninja.conf.erb'),
