@@ -19,11 +19,11 @@
 define backupninja::maildir($order = 40,
                            $ensure = present,
                            $when = 'everyday at 21:00',
-                           $srcdir = '/maildir',
-                           $destdir = '/crypt/maildir',
+                           $srcdir = false,
+                           $destdir = false,
                            $desthost = false,
                            $destuser = false,
-                           $destid_file = '/root/.ssh/id_rsa',
+                           $destid_file = false,
                            $remove = no,
                            $multiconnection = yes
                           ) {
