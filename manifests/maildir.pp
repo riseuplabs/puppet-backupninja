@@ -28,6 +28,13 @@ define backupninja::maildir($order = 40,
                            $multiconnection = yes
                           ) {
                           include backupninja::client
+                          
+                          case $srcdir { false: { err("need to define a source directory to backup!") } }
+                          case $destdir { false: { err("need to define a destination directory to backup!") } }
+                          case $desthost { false: { err("need to define a destination host for backups!") } }
+                          case $destuser { false: { err("need to define a destination user for backups!") } }
+                          case $destid_file { false: { err("need to define a ssh key id file to use!") } }
+
 	file { "${backupninja::client::configdir}/${order}_${name}.maildir":
 		ensure => $ensure,
 		content => template('backupninja/maildir.conf.erb'),
