@@ -10,7 +10,7 @@
 #      that we can find the correct file to remove).
 #
 # 
-define backupninja::sh($order = 30,
+define backupninja::sh($order = 50,
                            $ensure = present,
                            $command_string
                           ) {
