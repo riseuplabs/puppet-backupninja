@@ -18,6 +18,7 @@
 # 
 define backupninja::maildir($order = 40,
                            $ensure = present,
+                           $when = 'everyday at 21:00',
                            $srcdir = '/maildir',
                            $destdir = '/crypt/maildir',
                            $desthost = false,
