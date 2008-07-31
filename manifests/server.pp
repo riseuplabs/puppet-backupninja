@@ -24,7 +24,7 @@ class backupninja::server {
 
   # this define allows nodes to declare a remote backup sandbox, that have to
   # get created on the server
-  define sandbox($user = false, $host = false, $installuser = true, $dir = false, $backupkeys = false, $uid = false, $gid = "backupninjas", $backuptag = false) {
+  define sandbox($user = false, $host = false, $installuser = true, $dir = false, $ssh_dir = false, $authorized_keys_file = false, $backupkeys = false, $uid = false, $gid = "backupninjas", $backuptag = false) 
     $real_user = $name ? {
       false => $name,
       default => $user,
@@ -42,6 +42,14 @@ class backupninja::server {
       false => "${backupninja::server::real_backupdir}/$fqdn",
       default => $dir,
     }
+    $real_ssh_dir = $ssh_dir ? {
+      false => ".ssh",
+      default => $ssh_dir,
+    }
+    $real_authorized_keys_file = $authorized_keys_file ? {
+      false => "authorized_keys",
+      default => $authorized_keys_file,
+    }
     $real_backuptag = $backuptag ? {
       false => "backupninja-$real_host",
       default => $backuptag,
@@ -54,17 +62,17 @@ class backupninja::server {
     }
     case $installuser {
       true: {
-        @@file { "$real_dir/.ssh":
+        @@file { "${real_dir}/${real_ssh_dir}":
           ensure => directory,
           mode => 700, owner => $user, group => 0,
           require => File["$real_dir"],
           tag => "$real_backuptag",
         }
-        @@file { "$real_dir/.ssh/authorized_keys":
+        @@file { "${real_dir}/${real_ssh_dir}/${real_authorized_keys_file}":
           ensure => present,
           mode => 644, owner => 0, group => 0,
           source => "$real_backupkeys/${user}_id_rsa.pub",
-          require => File["$real_dir/.ssh"],
+          require => File["${real_dir}/${real_ssh_dir}"],
           tag => "$real_backuptag",
         }
         

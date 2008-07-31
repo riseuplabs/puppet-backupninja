@@ -35,7 +35,7 @@ define backupninja::rdiff($order = 90,
 	case $type {
 	        'remote': {
 			case $host { false: { err("need to define a host for remote backups!") } }
-		        backupninja::server::sandbox { "${user}-${name}": user => $user, host => $host, dir => $directory, installuser => $installuser, backuptag => $backuptag }
+		        backupninja::server::sandbox { "${user}-${name}": user => $user, host => $host, dir => $directory, ssh_dir => $ssh_dir, authorized_keys_file => $authorized_keys_file, installuser => $installuser, backuptag => $backuptag }
                         backupninja::client::key { "${user}-${name}": user => $user, host => $host, installkey => $installkey }
 		}
 	}
