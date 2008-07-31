@@ -23,7 +23,7 @@ define backupninja::rdiff(
                "/home/*/gtk-gnutella-downloads" ],
   $include = [ "/var/spool/cron/crontabs", "/var/backups", "/etc", "/root",
                "/home", "/usr/local/*bin", "/var/lib/dpkg/status*" ],
-  $vsinclude = false, $keep = 30, $sshoptions = false, $options = false, $manage_ssh_dir = true,
+  $vsinclude = false, $keep = 30, $sshoptions = false, $options = false, $ssh_dir_manage = true,
   $ssh_dir = false, $authorized_keys_file = false, $installuser = true, $installkey = true,
   $backuptag = false)
 {
@@ -35,7 +35,7 @@ define backupninja::rdiff(
       backupninja::server::sandbox
       {
         "${user}-${name}": user => $user, host => $host, dir => $directory,
-        manage_ssh_dir => $manage_ssh_dir, ssh_dir => $ssh_dir,
+        manage_ssh_dir => $ssh_dir_manage, ssh_dir => $ssh_dir,
         authorized_keys_file => $authorized_keys_file, installuser => $installuser,
         backuptag => $backuptag
       }

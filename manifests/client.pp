@@ -27,6 +27,10 @@ class backupninja::client {
     '' => true,
     default => $keymanage
   }
+  $real_ssh_dir_manage = $ssh_dir_manage ? {
+    '' => true,
+    default => $ssh_dir_manage
+  }
   package { 'backupninja':
     ensure => '0.9.5-3';
   }
