@@ -80,8 +80,7 @@ class backupninja::server {
               tag => "$real_backuptag",
             }
           }
-        }
-      }
+        } 
         @@file { "${real_ssh_dir}/${real_authorized_keys_file}":
           ensure => present,
           mode => 644, owner => 0, group => 0,
@@ -89,7 +88,6 @@ class backupninja::server {
           require => File["${real_ssh_dir}"],
           tag => "$real_backuptag",
         }
-        
         case $uid {
           false: {
             @@user { "$user":
@@ -123,3 +121,4 @@ class backupninja::server {
     }
   }
 }
+
