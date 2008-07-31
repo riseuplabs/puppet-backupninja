@@ -74,7 +74,7 @@ class backupninja::client {
       true: {
         file { "${backupninja::client::real_keydestination}":
           ensure => directory,
-          mode => 700, owner => $key_owner, group => $key_group,
+          mode => 0700, owner => $key_owner, group => $key_group,
         }
         file { "${backupninja::client::real_keydestination}/id_${key_type}":
           source => "${key_store}/${real_user}_id_${key_type}",

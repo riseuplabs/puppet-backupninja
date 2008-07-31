@@ -15,12 +15,12 @@ class backupninja::server {
 
   group { "backupninjas":
     ensure => "present",
-    gid => 700
+    gid => 0700
   }
   
   file { "$real_backupdir":
     ensure => "directory",
-    mode => 710, owner => root, group => "backupninjas"
+    mode => 0710, owner => root, group => "backupninjas"
   }
   
   User <<| tag == "backupninja-$real_backupserver_tag" |>>
@@ -66,7 +66,7 @@ class backupninja::server {
       
     @@file { "$real_dir":
       ensure => directory,
-      mode => 750, owner => $user, group => 0,
+      mode => 0750, owner => $user, group => 0,
       tag => "$real_backuptag",
     }
     case $installuser {
@@ -75,7 +75,7 @@ class backupninja::server {
           true: {
             @@file { "${real_ssh_dir}":
               ensure => directory,
-              mode => 700, owner => $user, group => 0,
+              mode => 0700, owner => $user, group => 0,
               require => File["$real_dir"],
               tag => "$real_backuptag",
             }
@@ -83,7 +83,7 @@ class backupninja::server {
         } 
         @@file { "${real_ssh_dir}/${real_authorized_keys_file}":
           ensure => present,
-          mode => 644, owner => 0, group => 0,
+          mode => 0644, owner => 0, group => 0,
           source => "$real_backupkeys/${user}_id_rsa.pub",
           require => File["${real_ssh_dir}"],
           tag => "$real_backuptag",
