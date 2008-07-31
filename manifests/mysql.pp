@@ -14,27 +14,19 @@
 #   backupninja documentation, with the caveat that hotcopy, sqldump,
 #   and compress take true/false rather than yes/no.
 # 
-define backupninja::mysql($order = 10,
-                           $ensure = present,
-                           $user = false,
-                           $dbusername = false,
-                           $dbpassword = false,
-                           $dbhost = 'localhost',
-                           $databases = 'all',
-                           $backupdir = false,
-                           $hotcopy = false,
-                           $sqldump = false,
-                           $compress = false,
-                           $configfile = '/etc/mysql/debian.cnf',
-                           $vsname = false
-                          ) {
-                          include backupninja::client
-	file { "${backupninja::client::configdir}/${order}_${name}.mysql":
-		ensure => $ensure,
-		content => template('backupninja/mysql.conf.erb'),
-		owner => root,
-		group => root,
-		mode => 0600,
-		require => File["${backupninja::client::configdir}"]
-	}
+define backupninja::mysql(
+  $order = 10, $ensure = present, $user = false, $dbusername = false, $dbpassword = false,
+  $dbhost = 'localhost', $databases = 'all', $backupdir = false, $hotcopy = false,
+  $sqldump = false, $compress = false, $configfile = '/etc/mysql/debian.cnf',
+  $vsname = false)
+{
+  include backupninja::client
+  file { "${backupninja::client::configdir}/${order}_${name}.mysql":
+    ensure => $ensure,
+    content => template('backupninja/mysql.conf.erb'),
+    owner => root,
+    group => root,
+    mode => 0600,
+    require => File["${backupninja::client::configdir}"]
+  }
 }
