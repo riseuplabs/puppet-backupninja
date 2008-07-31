@@ -33,7 +33,9 @@ class backupninja::client {
   file { $configdir:
     ensure => directory
   }
-  define key ( $user = false, $host = false, $installkey=false, $keyowner=false, $keygroup=false, $keystore=false, $keytype=false )
+  define key(
+    $user = false, $host = false, $installkey=false, $keyowner=false,
+    $keygroup=false, $keystore=false, $keytype=false)
   {
     $real_user = $user ? {
       false => $name,
