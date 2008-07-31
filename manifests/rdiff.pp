@@ -15,38 +15,43 @@
 #      options should be given as arrays if you want to specify multiple
 #      directories.
 # 
-define backupninja::rdiff($order = 90,
-                           $ensure = present,
-                           $user = false,
-                           $directory = false,
-                           $host = false,
-                           $type = 'local',
-                           $exclude = [ "/home/*/.gnupg", "/home/*/.local/share/Trash", "/home/*/.Trash", "/home/*/.thumbnails", "/home/*/.beagle", "/home/*/.aMule", "/home/*/gtk-gnutella-downloads" ],
-                           $include = [ "/var/spool/cron/crontabs", "/var/backups", "/etc", "/root", "/home", "/usr/local/*bin", "/var/lib/dpkg/status*" ],
-                           $vsinclude = false,
-                           $keep = 30,
-                           $sshoptions = false,
-                           $options = false,
-                           $ssh_dir = false,
-                           $authorized_keys_file = false,
-                           $installuser = true,
-                           $installkey = true,
-                           $backuptag = false
-                          ) {
-	include backupninja::client
-	case $type {
-	        'remote': {
-			case $host { false: { err("need to define a host for remote backups!") } }
-		        backupninja::server::sandbox { "${user}-${name}": user => $user, host => $host, dir => $directory, ssh_dir => $ssh_dir, authorized_keys_file => $authorized_keys_file, installuser => $installuser, backuptag => $backuptag }
-                        backupninja::client::key { "${user}-${name}": user => $user, host => $host, installkey => $installkey }
-		}
-	}
-	file { "${backupninja::client::configdir}/${order}_${name}.rdiff":
-		ensure => $ensure,
-		content => template('backupninja/rdiff.conf.erb'),
-		owner => root,
-		group => root,
-		mode => 0600,
-		require => File["${backupninja::client::configdir}"]
-	}
+define backupninja::rdiff(
+  $order = 90, $ensure = present, $user = false, $directory = false, $host = false,
+  $type = 'local',
+  $exclude = [ "/home/*/.gnupg", "/home/*/.local/share/Trash", "/home/*/.Trash",
+               "/home/*/.thumbnails", "/home/*/.beagle", "/home/*/.aMule",
+               "/home/*/gtk-gnutella-downloads" ],
+  $include = [ "/var/spool/cron/crontabs", "/var/backups", "/etc", "/root",
+               "/home", "/usr/local/*bin", "/var/lib/dpkg/status*" ],
+  $vsinclude = false, $keep = 30, $sshoptions = false, $options = false, $ssh_dir = false,
+  $authorized_keys_file = false, $installuser = true, $installkey = true, $backuptag = false)
+{
+  include backupninja::client
+  case $type {
+    'remote': {
+      case $host { false: { err("need to define a host for remote backups!") } }
+      
+      backupninja::server::sandbox
+      {
+        "${user}-${name}": user => $user, host => $host, dir => $directory,
+        ssh_dir => $ssh_dir, authorized_keys_file => $authorized_keys_file,
+        installuser => $installuser, backuptag => $backuptag
+      }
+      
+      backupninja::client::key
+      {
+        "${user}-${name}": user => $user, host => $host,
+        installkey => $installkey
+      }
+    }
+  }
+  file { "${backupninja::client::configdir}/${order}_${name}.rdiff":
+    ensure => $ensure,
+    content => template('backupninja/rdiff.conf.erb'),
+    owner => root,
+    group => root,
+    mode => 0600,
+    require => File["${backupninja::client::configdir}"]
+  }
 }
+  

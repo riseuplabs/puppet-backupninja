@@ -1,4 +1,5 @@
 class backupninja::server {
+
   $real_backupdir = $backupdir ? {
     '' => "/backup",
     default => $backupdir,
@@ -11,21 +12,28 @@ class backupninja::server {
     '' => $fqdn,
     default => $backupserver_tag
   }
+
   group { "backupninjas":
     ensure => "present",
     gid => 700
   }
+  
   file { "$real_backupdir":
     ensure => "directory",
     mode => 710, owner => root, group => "backupninjas"
   }
+  
   User <<| tag == "backupninja-$real_backupserver_tag" |>>
   File <<| tag == "backupninja-$real_backupserver_tag" |>>
 
   # this define allows nodes to declare a remote backup sandbox, that have to
   # get created on the server
-  define sandbox($user = false, $host = false, $installuser = true, $dir = false, $ssh_dir = false, $authorized_keys_file = false, $backupkeys = false, $uid = false, $gid = "backupninjas", $backuptag = false)
+  define sandbox(
+    $user = false, $host = false, $installuser = true, $dir = false, $ssh_dir = false,
+    $authorized_keys_file = false, $backupkeys = false, $uid = false, $gid = "backupninjas",
+    $backuptag = false)
   {
+    
     $real_user = $name ? {
       false => $name,
       default => $user,
