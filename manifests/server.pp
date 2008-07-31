@@ -24,7 +24,8 @@ class backupninja::server {
 
   # this define allows nodes to declare a remote backup sandbox, that have to
   # get created on the server
-  define sandbox($user = false, $host = false, $installuser = true, $dir = false, $ssh_dir = false, $authorized_keys_file = false, $backupkeys = false, $uid = false, $gid = "backupninjas", $backuptag = false) 
+  define sandbox($user = false, $host = false, $installuser = true, $dir = false, $ssh_dir = false, $authorized_keys_file = false, $backupkeys = false, $uid = false, $gid = "backupninjas", $backuptag = false)
+  {
     $real_user = $name ? {
       false => $name,
       default => $user,
