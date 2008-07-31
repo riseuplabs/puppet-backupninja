@@ -52,7 +52,7 @@ class backupninja::server {
       default => $dir,
     }
     $real_ssh_dir = $ssh_dir ? {
-      false => ".ssh",
+      false => "${real_dir}/.ssh",
       default => $ssh_dir,
     }
     $real_authorized_keys_file = $authorized_keys_file ? {
@@ -71,17 +71,17 @@ class backupninja::server {
     }
     case $installuser {
       true: {
-        @@file { "${real_dir}/${real_ssh_dir}":
+        @@file { "${real_ssh_dir}":
           ensure => directory,
           mode => 700, owner => $user, group => 0,
           require => File["$real_dir"],
           tag => "$real_backuptag",
         }
-        @@file { "${real_dir}/${real_ssh_dir}/${real_authorized_keys_file}":
+        @@file { "${real_ssh_dir}/${real_authorized_keys_file}":
           ensure => present,
           mode => 644, owner => 0, group => 0,
           source => "$real_backupkeys/${user}_id_rsa.pub",
-          require => File["${real_dir}/${real_ssh_dir}"],
+          require => File["${real_ssh_dir}"],
           tag => "$real_backuptag",
         }
         
