@@ -15,7 +15,7 @@ class backupninja::server {
 
   group { "backupninjas":
     ensure => "present",
-    gid => 0700
+    gid => 700
   }
   
   file { "$real_backupdir":
