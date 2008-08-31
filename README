@@ -39,7 +39,5 @@ If you configure a backupninja::server, it will collect those users and create
 them.  We have yet to create proper authorized_keys management to make that
 process completely automatic.
 
-At the moment, only the mysql and rdiff handlers have types defined for
-them, as they're the only handlers we currently use at Solutions First. 
-Writing others is fairly simple; feel free to contribute them, or ask really
-nicely and we might have a bit a free time.
+At the moment, not all the backupninja handlers are available, they are relatively
+easy to add however.
