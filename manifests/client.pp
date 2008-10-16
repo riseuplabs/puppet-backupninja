@@ -32,7 +32,7 @@ class backupninja::client {
     default => $ssh_dir_manage
   }
   package { 'backupninja':
-    ensure => '1.2.1-1~bpo40+1';
+    ensure => '0.9.6-3';
   }
   file { $configdir:
     ensure => directory
