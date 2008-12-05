@@ -17,7 +17,7 @@
 #
 # 
 define backupninja::maildir(
-  $order = 40, $ensure = present, $when = 'everyday at 21:00', $srcdir = false,
+  $order = 99, $ensure = present, $when = 'everyday at 21:00', $srcdir = false,
   $destdir = false, $desthost = false, $destuser = false, $destid_file = false,
   $remove = false, $multiconnection = yes, $keepdaily='4', $keepweekly='2',
   $keepmonthly='2')
