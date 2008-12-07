@@ -98,7 +98,7 @@ class backupninja::server {
               managehome => true,
               shell   => "/bin/sh",
               password => '*',
-              require => Group['backupninjas'],
+	      require => [ Group['backupninjas'], File["$real_dir"] ],
               tag => "$real_backuptag"
             }
           }
@@ -112,7 +112,7 @@ class backupninja::server {
               managehome => true,
               shell   => "/bin/sh",
               password => '*',
-              require => Group['backupninjas'],
+	      require => [ Group['backupninjas'], File["$real_dir"] ],
               tag => "$real_backuptag"
             }
           }
