@@ -21,7 +21,7 @@ define backupninja::mysql(
   $vsname = false)
 {
   
-  $real_config_file = $configfile ? {
+  $real_configfile = $configfile ? {
     true => "/etc/mysql/debian.cnf",
     default => $configfile,
   }
