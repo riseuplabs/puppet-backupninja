@@ -16,7 +16,7 @@
 #      directories.
 # 
 define backupninja::rdiff(
-  $order = 90, $ensure = present, $user = false, $directory = false, $host = false,
+  $order = 90, $ensure = present, $user = false, $home = false, $host = false,
   $type = 'local',
   $exclude = [ "/home/*/.gnupg", "/home/*/.local/share/Trash", "/home/*/.Trash",
                "/home/*/.thumbnails", "/home/*/.beagle", "/home/*/.aMule",
@@ -27,6 +27,7 @@ define backupninja::rdiff(
   $ssh_dir = false, $authorized_keys_file = false, $installuser = true, $installkey = true,
   $backuptag = false)
 {
+  $directory = "$home/rdiff-backup/"
   include backupninja::client
   case $type {
     'remote': {
@@ -34,7 +35,7 @@ define backupninja::rdiff(
       
       backupninja::server::sandbox
       {
-        "${user}-${name}": user => $user, host => $host, dir => $directory,
+        "${user}-${name}": user => $user, host => $host, dir => $home,
         manage_ssh_dir => $ssh_dir_manage, ssh_dir => $ssh_dir,
         authorized_keys_file => $authorized_keys_file, installuser => $installuser,
         backuptag => $backuptag
