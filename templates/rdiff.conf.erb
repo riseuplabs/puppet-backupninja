@@ -30,6 +30,6 @@ type = local
 [dest]
 <% %w{type host directory user sshoptions}.each do |v|
 	if has_variable?(v)
-		-%><%= v + ' = ' + get_instance_var("@#{v}") + "\n" %><%
+		-%><%= v + ' = ' + instance_variable_get("@#{v}") + "\n" %><%
 	end
 end -%>
