@@ -12,3 +12,7 @@ end -%>
 hotcopy = <%= hotcopy ? 'yes' : 'no' %>
 sqldump = <%= sqldump ? 'yes' : 'no' %>
 compress = <%= compress ? 'yes' : 'no' %>
+
+<% if real_configfile %>
+configfile = <%= real_configfile %>
+<% end %>
