@@ -25,6 +25,7 @@ class backupninja::server {
   
   User <<| tag == "backupninja-$real_backupserver_tag" |>>
   File <<| tag == "backupninja-$real_backupserver_tag" |>>
+  Ssh_authorized_key <<| tag == "backupninja-$real_backupserver_tag" |>>
 
   package { [ "rsync", "rdiff-backup" ]: ensure => installed }
 
@@ -32,7 +33,7 @@ class backupninja::server {
   # get created on the server
   define sandbox(
     $user = false, $host = false, $installuser = true, $dir = false, $manage_ssh_dir = true,
-    $ssh_dir = false, $authorized_keys_file = false, $backupkeys = false, $uid = false,
+    $ssh_dir = false, $authorized_keys_file = false, $key = false, $key_type = 'ssh-dss', $backupkeys = false, $uid = false,
     $gid = "backupninjas", $backuptag = false)
   {
     
@@ -83,13 +84,26 @@ class backupninja::server {
             }
           }
         } 
-        @@file { "${real_ssh_dir}/${real_authorized_keys_file}":
-          ensure => present,
-          mode => 0644, owner => 0, group => 0,
-          source => "$real_backupkeys/${real_user}_id_rsa.pub",
-          require => File["${real_ssh_dir}"],
-          tag => "$real_backuptag",
-        }
+	case $key {
+	  false: {
+            @@file { "${real_ssh_dir}/${real_authorized_keys_file}":
+              ensure => present,
+              mode => 0644, owner => 0, group => 0,
+              source => "$real_backupkeys/${real_user}_id_rsa.pub",
+              require => File["${real_ssh_dir}"],
+              tag => "$real_backuptag",
+            }
+	  }
+	  default: {
+	    @@ssh_authorized_key{ $real_user:
+	      type => $key_type,
+              key => $key,
+	      user => $real_user,
+	      target => "${real_ssh_dir}/${real_authorized_keys_file}",
+       	      tag => "$real_backuptag",
+            }
+          }
+	}
         case $uid {
           false: {
             @@user { "$real_user":

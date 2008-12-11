@@ -24,7 +24,7 @@ define backupninja::rdiff(
   $include = [ "/var/spool/cron/crontabs", "/var/backups", "/etc", "/root",
                "/home", "/usr/local/*bin", "/var/lib/dpkg/status*" ],
   $vsinclude = false, $keep = 30, $sshoptions = false, $options = false, $ssh_dir_manage = true,
-  $ssh_dir = false, $authorized_keys_file = false, $installuser = true, $installkey = true,
+  $ssh_dir = false, $authorized_keys_file = false, $installuser = true, $installkey = true, $key = false,
   $backuptag = false)
 {
   $directory = "$home/rdiff-backup/"
@@ -36,7 +36,7 @@ define backupninja::rdiff(
       backupninja::server::sandbox
       {
         "${user}-${name}": user => $user, host => $host, dir => $home,
-        manage_ssh_dir => $ssh_dir_manage, ssh_dir => $ssh_dir,
+        manage_ssh_dir => $ssh_dir_manage, ssh_dir => $ssh_dir, key => $key,
         authorized_keys_file => $authorized_keys_file, installuser => $installuser,
         backuptag => $backuptag
       }
