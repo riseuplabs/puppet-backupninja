@@ -26,6 +26,8 @@ class backupninja::server {
   User <<| tag == "backupninja-$real_backupserver_tag" |>>
   File <<| tag == "backupninja-$real_backupserver_tag" |>>
 
+  package { [ "rsync", "rdiff-backup" ]: ensure => installed }
+
   # this define allows nodes to declare a remote backup sandbox, that have to
   # get created on the server
   define sandbox(
@@ -34,7 +36,7 @@ class backupninja::server {
     $gid = "backupninjas", $backuptag = false)
   {
     
-    $real_user = $name ? {
+    $real_user = $user ? {
       false => $name,
       default => $user,
       '' => $name,
@@ -66,7 +68,7 @@ class backupninja::server {
       
     @@file { "$real_dir":
       ensure => directory,
-      mode => 0750, owner => $user, group => 0,
+      mode => 0750, owner => $real_user, group => 0,
       tag => "$real_backuptag",
     }
     case $installuser {
@@ -75,7 +77,7 @@ class backupninja::server {
           true: {
             @@file { "${real_ssh_dir}":
               ensure => directory,
-              mode => 0700, owner => $user, group => 0,
+              mode => 0700, owner => $real_user, group => 0,
               require => File["$real_dir"],
               tag => "$real_backuptag",
             }
@@ -84,13 +86,13 @@ class backupninja::server {
         @@file { "${real_ssh_dir}/${real_authorized_keys_file}":
           ensure => present,
           mode => 0644, owner => 0, group => 0,
-          source => "$real_backupkeys/${user}_id_rsa.pub",
+          source => "$real_backupkeys/${real_user}_id_rsa.pub",
           require => File["${real_ssh_dir}"],
           tag => "$real_backuptag",
         }
         case $uid {
           false: {
-            @@user { "$user":
+            @@user { "$real_user":
               ensure  => "present",
               gid     => "$gid",
               comment => "$name backup sandbox",
@@ -103,7 +105,7 @@ class backupninja::server {
             }
           }
           default: {
-            @@user { "$user":
+            @@user { "$real_user":
               ensure  => "present",
               uid     => "$uid",
               gid     => "$gid",
