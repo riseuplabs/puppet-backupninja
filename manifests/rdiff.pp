@@ -27,6 +27,11 @@ define backupninja::rdiff(
   $ssh_dir = false, $authorized_keys_file = false, $installuser = true, $installkey = true, $key = false,
   $backuptag = false)
 {
+  $real_backuptag = $backuptag ? {
+      false => $host,
+      default => $backuptag
+  }
+
   $directory = "$home/rdiff-backup/"
   include backupninja::client
   case $type {
@@ -35,10 +40,10 @@ define backupninja::rdiff(
       
       backupninja::server::sandbox
       {
-        "${user}-${name}": user => $user, host => $host, dir => $home,
+        "${user}-${name}": user => $user, host => $fqdn, dir => $home,
         manage_ssh_dir => $ssh_dir_manage, ssh_dir => $ssh_dir, key => $key,
         authorized_keys_file => $authorized_keys_file, installuser => $installuser,
-        backuptag => $backuptag
+        backuptag => $real_backuptag
       }
       
       backupninja::client::key
