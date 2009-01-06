@@ -23,6 +23,20 @@ class backupninja::server {
     mode => 0710, owner => root, group => "backupninjas"
   }
   
+  file { "/usr/local/bin/checkbackups":
+    ensure => "present",
+    content => template("backupninja/checkbackups.sh"),
+    mode => 0755, owner => root, group => root,
+  }
+
+  cron { checkbackups:
+    command => "/usr/local/bin/checkbackups.sh | /usr/sbin/send_nsca -H nagios.koumbit.net -c /etc/send_nsca.cfg",
+    user => "root",
+    hour => 8,
+    minute => 0,
+    require => [ File["/usr/local/bin/checkbackups"], Package['nsca'] ]
+  }
+
   User <<| tag == "backupninja-$real_backupserver_tag" |>>
   File <<| tag == "backupninja-$real_backupserver_tag" |>>
   Ssh_authorized_key <<| tag == "backupninja-$real_backupserver_tag" |>>
@@ -63,10 +77,13 @@ class backupninja::server {
       default => $authorized_keys_file,
     }
     $real_backuptag = $backuptag ? {
-      false => "backupninja-$real_host",
+      false => "backupninja-$fqdn",
       default => $backuptag,
     }
       
+    # configure a passive service check for backups
+    nagios2::passive_service { "backups-$real_host": nagios2_host_name => $real_host, nagios2_description => 'backups' }
+
     @@file { "$real_dir":
       ensure => directory,
       mode => 0750, owner => $real_user, group => 0,
