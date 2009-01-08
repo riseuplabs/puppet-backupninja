@@ -32,8 +32,8 @@ class backupninja::server {
   cron { checkbackups:
     command => "/usr/local/bin/checkbackups.sh | /usr/sbin/send_nsca -H nagios.koumbit.net -c /etc/send_nsca.cfg",
     user => "root",
-    hour => 8,
-    minute => 0,
+    hour => "8-23",
+    minute => 59,
     require => [ File["/usr/local/bin/checkbackups"], Package['nsca'] ]
   }
 
