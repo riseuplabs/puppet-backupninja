@@ -96,7 +96,7 @@ class backupninja::server {
             @@file { "${real_ssh_dir}":
               ensure => directory,
               mode => 0700, owner => $real_user, group => 0,
-              require => File["$real_dir"],
+              require => [User[$real_user], File["$real_dir"]],
               tag => "$real_backuptag",
             }
           }
@@ -118,6 +118,7 @@ class backupninja::server {
 	      user => $real_user,
 	      target => "${real_ssh_dir}/${real_authorized_keys_file}",
        	      tag => "$real_backuptag",
+	      require => User[$real_user],
             }
           }
 	}
@@ -131,7 +132,7 @@ class backupninja::server {
               managehome => true,
               shell   => "/bin/sh",
               password => '*',
-	      require => [ Group['backupninjas'], File["$real_dir"] ],
+	      require => Group['backupninjas'],
               tag => "$real_backuptag"
             }
           }
@@ -145,7 +146,7 @@ class backupninja::server {
               managehome => true,
               shell   => "/bin/sh",
               password => '*',
-	      require => [ Group['backupninjas'], File["$real_dir"] ],
+	      require => Group['backupninjas'],
               tag => "$real_backuptag"
             }
           }
