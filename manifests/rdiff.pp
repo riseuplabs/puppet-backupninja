@@ -28,7 +28,7 @@ define backupninja::rdiff(
   $backuptag = false)
 {
   $real_backuptag = $backuptag ? {
-      false => $host,
+      false => "backupninja-$host",
       default => $backuptag
   }
 
@@ -61,5 +61,6 @@ define backupninja::rdiff(
     mode => 0600,
     require => File["${backupninja::client::configdir}"]
   }
+  package { "rdiff-backup": ensure => installed }
 }
   
