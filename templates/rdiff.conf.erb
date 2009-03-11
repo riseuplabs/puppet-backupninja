@@ -33,7 +33,7 @@ type = local
     
     if VersionComparer.versioncmp(Puppet.version,'0.24.6') >= 0
         %w{type host directory user sshoptions}.each do |v|
-                if has_variable?(v)
+                if has_variable?(v) and instance_variable_get("@#{v}").to_s != "false"
                 -%>
 <%= v + ' = ' + instance_variable_get("@#{v}").to_s %>
         <%-
