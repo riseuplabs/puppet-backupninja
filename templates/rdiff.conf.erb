@@ -28,25 +28,9 @@ type = local
 <% end -%>
 
 [dest]
-<%- include Puppet::Util::Package
-    class VersionComparer; extend Puppet::Util::Package; end
-    
-    if VersionComparer.versioncmp(Puppet.version,'0.24.6') >= 0
-        %w{type host directory user sshoptions}.each do |v|
-                if has_variable?(v) and instance_variable_get("@#{v}").to_s != "false"
-                -%>
+<%- %w{type host directory user sshoptions}.each do |v|
+    if has_variable?(v) and instance_variable_get("@#{v}").to_s != "false" -%>
 <%= v + ' = ' + instance_variable_get("@#{v}").to_s %>
-        <%-
-                end
-        end
-        %>
-<%- else -%>
-        <%- %w{type host directory user sshoptions}.each do |v|
-                if @scope.lookupvar(v)
-                -%>
-<%= v + ' = ' + @scope.lookupvar(v) %>
-        <%-
-                end
-        end
-        %>
-<%- end -%>
+<%-
+    end
+end -%>
