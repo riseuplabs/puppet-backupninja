@@ -114,6 +114,6 @@ foreach $host (@hosts) {
 } continue {
 	printf "$host\tbackups\t$state\t$message\n";
 	foreach my $vserver (@vservers) {
-		printf "$vserver$dom_sufx\tbackups\t$state\t$message\n";
+		printf "$vserver$dom_sufx\tbackups\t$state\t$message, same as parent: $host\n";
 	}
 }
