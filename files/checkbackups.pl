@@ -35,6 +35,11 @@ my $STATE_CRITICAL=2;
 my $STATE_UNKNOWN=3;
 my $STATE_DEPENDENT=4;
 
+# gross hack: we look into subdirs to find vservers
+my @vserver_dirs = qw{/var/lib/vservers /vservers};
+# even worse: hardcode a suffix to the vserver name to get a FQDN
+my $dom_sufx = ".koumbit.net";
+
 our $opt_d = "/backup";
 our $opt_c = 48 * 60 * 60;
 our $opt_w = 24 * 60 * 60;
@@ -55,12 +60,14 @@ my $warn = $opt_w;
 my @hosts=qx{ls $backupdir};
 
 chdir($backupdir);
-foreach my $host (@hosts) {
+my ($state, $message, @vservers, $host);
+foreach $host (@hosts) {
 	chomp($host);
 	my $flag="";
 	my $type="unknown";
-	my @vservers = ();
-	my $state = $STATE_UNKNOWN;
+	@vservers = ();
+	$state = $STATE_UNKNOWN;
+	$message = "???";
 	if (-d $host) {
 		# guess the backup type and find a proper stamp file to compare
 		# XXX: this doesn't check if the backup was actually successful
@@ -68,10 +75,12 @@ foreach my $host (@hosts) {
 		if (-d "$host/rdiff-backup") {
 			$flag="$host/rdiff-backup/rdiff-backup-data/backup.log";
 			$type="rdiff";
-			$vserver_dir = "$host/rdiff-backup/var/lib/vservers";
-    			if (opendir(DIR, $vserver_dir)) {
-    				@vservers = grep { /^\./ && -f "$vserver_dir/$_" } readdir(DIR);
-    				closedir DIR;
+			foreach my $vserver_dir (@vserver_dirs) {
+				$dir = "$host/rdiff-backup$vserver_dir";
+    				if (opendir(DIR, $dir)) {
+    					@vservers = grep { /^[^\.]/ && -d "$dir/$_" } readdir(DIR);
+    					closedir DIR;
+				}
 			}
 		} elsif (-d "$host/dump") {
 			$flag="$host/dump/" . `ls -tr $host/dump | tail -1`;
@@ -105,6 +114,6 @@ foreach my $host (@hosts) {
 } continue {
 	printf "$host\tbackups\t$state\t$message\n";
 	foreach my $vserver (@vservers) {
-		printf "$vserver\tbackups\t$state\t$message\n";
+		printf "$vserver$dom_sufx\tbackups\t$state\t$message\n";
 	}
 }
