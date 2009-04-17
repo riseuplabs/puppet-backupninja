@@ -59,6 +59,8 @@ foreach my $host (@hosts) {
 	chomp($host);
 	my $flag="";
 	my $type="unknown";
+	my @vservers = ();
+	my $state = $STATE_UNKNOWN;
 	if (-d $host) {
 		# guess the backup type and find a proper stamp file to compare
 		# XXX: this doesn't check if the backup was actually successful
@@ -66,6 +68,11 @@ foreach my $host (@hosts) {
 		if (-d "$host/rdiff-backup") {
 			$flag="$host/rdiff-backup/rdiff-backup-data/backup.log";
 			$type="rdiff";
+			$vserver_dir = "$host/rdiff-backup/var/lib/vservers";
+    			if (opendir(DIR, $vserver_dir)) {
+    				@vservers = grep { /^\./ && -f "$vserver_dir/$_" } readdir(DIR);
+    				closedir DIR;
+			}
 		} elsif (-d "$host/dump") {
 			$flag="$host/dump/" . `ls -tr $host/dump | tail -1`;
 			chomp($flag);
@@ -74,17 +81,16 @@ foreach my $host (@hosts) {
 			$flag="$host/dup";
 			$type="duplicity";
 		} else {
-			printf "$host\tbackups\t$STATE_UNKNOWN\tunknown system\n";
+			$message = "unknown system";
 			next;
 		}
 		my @stats = stat($flag);
 		if (not @stats) {
-			printf "$host\tbackups\t$STATE_UNKNOWN\tcannot stat flag $flag\n";
+			$message = "cannot stat flag $flag";
 			next;
 		}
 		my $t = time();
 		my $delta = $t - $stats[9];
-		my $state = $STATE_UNKNOWN;
 		if ($delta > $crit) {
 			$state = $STATE_CRITICAL;
 		} elsif ($delta > $warn) {
@@ -92,10 +98,13 @@ foreach my $host (@hosts) {
 		} elsif ($delta >= 0) {
 			$state = $STATE_OK;
 		}
-		print "$host\t";
-		print "backups\t$state";
-		print "\t$delta seconds old\n";
+		$message = "$delta seconds old";
 	} else {
-		printf "$host\tbackups\t$STATE_UNKNOWN\tno directory\n";
+		$message = "no directory";
+	}
+} continue {
+	printf "$host\tbackups\t$state\t$message\n";
+	foreach my $vserver (@vservers) {
+		printf "$vserver\tbackups\t$state\t$message\n";
 	}
 }
