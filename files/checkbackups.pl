@@ -37,8 +37,6 @@ my $STATE_DEPENDENT=4;
 
 # gross hack: we look into subdirs to find vservers
 my @vserver_dirs = qw{/var/lib/vservers /vservers};
-# even worse: hardcode a suffix to the vserver name to get a FQDN
-my $dom_sufx = ".koumbit.net";
 
 our $opt_d = "/backup";
 our $opt_c = 48 * 60 * 60;
@@ -113,6 +111,8 @@ foreach $host (@hosts) {
 	}
 } continue {
 	printf "$host\tbackups\t$state\t$message\n";
+	my @dom_sufx = split(/\./, $host);
+	my $dom_sufx = join('.', @dom_sufx[1,-1]);
 	foreach my $vserver (@vservers) {
 		printf "$vserver$dom_sufx\tbackups\t$state\t$message, same as parent: $host\n";
 	}
