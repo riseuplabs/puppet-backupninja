@@ -41,7 +41,8 @@ class backupninja::server {
   File <<| tag == "backupninja-$real_backupserver_tag" |>>
   Ssh_authorized_key <<| tag == "backupninja-$real_backupserver_tag" |>>
 
-  package { [ "rsync", "rdiff-backup" ]: ensure => installed }
+  package { "rsync": ensure => installed }
+  include backupninja::rdiff-installed
 
   # this define allows nodes to declare a remote backup sandbox, that have to
   # get created on the server
@@ -82,7 +83,7 @@ class backupninja::server {
     }
       
     # configure a passive service check for backups
-    nagios2::passive_service { "backups-$real_host": nagios2_host_name => $real_host, nagios2_description => 'backups' }
+    nagios2::passive_service { "backups-$real_host": nagios2_host_name => $real_host, nagios2_description => 'backups', servicegroups => "backups" }
 
     @@file { "$real_dir":
       ensure => directory,
