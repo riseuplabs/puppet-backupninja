@@ -114,6 +114,6 @@ foreach $host (@hosts) {
 	my @dom_sufx = split(/\./, $host);
 	my $dom_sufx = join('.', @dom_sufx[1,-1]);
 	foreach my $vserver (@vservers) {
-		printf "$vserver$dom_sufx\tbackups\t$state\t$message, same as parent: $host\n";
+		printf "$vserver.$dom_sufx\tbackups\t$state\t$message, same as parent: $host\n";
 	}
 }
