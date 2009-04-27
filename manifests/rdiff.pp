@@ -23,7 +23,7 @@ define backupninja::rdiff(
                "/home/*/gtk-gnutella-downloads" ],
   $include = [ "/var/spool/cron/crontabs", "/var/backups", "/etc", "/root",
                "/home", "/usr/local/*bin", "/var/lib/dpkg/status*" ],
-  $vsinclude = false, $keep = 30, $sshoptions = false, $options = false, $ssh_dir_manage = true,
+  $vsinclude = false, $keep = 30, $sshoptions = false, $options = '--force', $ssh_dir_manage = true,
   $ssh_dir = false, $authorized_keys_file = false, $installuser = true, $installkey = true, $key = false,
   $backuptag = false)
 {
@@ -61,6 +61,14 @@ define backupninja::rdiff(
     mode => 0600,
     require => File["${backupninja::client::configdir}"]
   }
-  package { "rdiff-backup": ensure => installed }
+  include backupninja::rdiff-installed
+}
+
+class backupninja::rdiff-installed {
+  case $lsbdistcodename {
+    "etch": { $version = "1.2.5-1~bpo40+1" }
+    default: { $version = "installed" }
+  }
+  package { "rdiff-backup": ensure => $version }
 }
   
