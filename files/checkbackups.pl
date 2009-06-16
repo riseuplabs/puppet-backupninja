@@ -41,10 +41,11 @@ my @vserver_dirs = qw{/var/lib/vservers /vservers};
 our $opt_d = "/backup";
 our $opt_c = 48 * 60 * 60;
 our $opt_w = 24 * 60 * 60;
+our $opt_v = 0;
 
-if (!getopts('d:c:w:')) {
+if (!getopts('d:c:w:v')) {
 	print <<EOF
-Usage: $0 [ -d <backupdir> ] [ -c <threshold> ] [ -w <threshold> ]
+Usage: $0 [ -d <backupdir> ] [ -c <threshold> ] [ -w <threshold> ] -v
 EOF
 	;
 	exit();
@@ -63,16 +64,33 @@ foreach $host (@hosts) {
 	chomp($host);
 	my $flag="";
 	my $type="unknown";
+	my $extra_msg="";
 	@vservers = ();
 	$state = $STATE_UNKNOWN;
 	$message = "???";
 	if (-d $host) {
 		# guess the backup type and find a proper stamp file to compare
-		# XXX: this doesn't check if the backup was actually successful
 		# XXX: the backup type should be part of the machine registry
+		my $last_bak;
 		if (-d "$host/rdiff-backup") {
 			$flag="$host/rdiff-backup/rdiff-backup-data/backup.log";
 			$type="rdiff";
+			if (open(FLAG, $flag)) {
+				while (<FLAG>) {
+					if (/StartTime ([0-9]*).[0-9]* \((.*)\)/) {
+						$last_bak = $1;
+						$extra_msg = ' [backup.log]';
+						$opt_v && print STDERR "found timestamp $1 ($2) in backup.log\n";
+					}
+				}
+				if (!$last_bak) {
+					$message = "cannot parse backup.log for a valid timestamp";
+					next;
+				}
+			} else {
+				$opt_v && print STDERR "cannot open backup.log\n";
+			}
+			close(FLAG);
 			foreach my $vserver_dir (@vserver_dirs) {
 				$dir = "$host/rdiff-backup$vserver_dir";
     				if (opendir(DIR, $dir)) {
@@ -81,23 +99,28 @@ foreach $host (@hosts) {
 				}
 			}
 		} elsif (-d "$host/dump") {
+			# XXX: this doesn't check backup consistency
 			$flag="$host/dump/" . `ls -tr $host/dump | tail -1`;
 			chomp($flag);
 			$type="dump";
 		} elsif (-d "$host/dup") {
+			# XXX: this doesn't check backup consistency
 			$flag="$host/dup";
 			$type="duplicity";
 		} else {
 			$message = "unknown system";
 			next;
 		}
-		my @stats = stat($flag);
-		if (not @stats) {
-			$message = "cannot stat flag $flag";
-			next;
+		if (!defined($last_bak)) {
+			my @stats = stat($flag);
+			if (not @stats) {
+				$message = "cannot stat flag $flag";
+				next;
+			}
+			$last_bak = $stats[9];
 		}
 		my $t = time();
-		my $delta = $t - $stats[9];
+		my $delta = $t - $last_bak;
 		if ($delta > $crit) {
 			$state = $STATE_CRITICAL;
 		} elsif ($delta > $warn) {
@@ -105,7 +128,7 @@ foreach $host (@hosts) {
 		} elsif ($delta >= 0) {
 			$state = $STATE_OK;
 		}
-		$message = "$delta seconds old";
+		$message = "$delta seconds old$extra_msg";
 	} else {
 		$message = "no directory";
 	}
