@@ -38,4 +38,5 @@ define backupninja::maildir(
     mode => 0600,
     require => File["${backupninja::client::configdir}"]
   }
+  package { rsync: ensure => installed }
 }
