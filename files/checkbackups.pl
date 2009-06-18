@@ -42,10 +42,11 @@ our $opt_d = "/backup";
 our $opt_c = 48 * 60 * 60;
 our $opt_w = 24 * 60 * 60;
 our $opt_v = 0;
+our $opt_o;
 
-if (!getopts('d:c:w:v')) {
+if (!getopts('d:c:w:vo')) {
 	print <<EOF
-Usage: $0 [ -d <backupdir> ] [ -c <threshold> ] [ -w <threshold> ] -v
+Usage: $0 [ -d <backupdir> ] [ -c <threshold> ] [ -w <threshold> ] [ -o ] [ -v ]
 EOF
 	;
 	exit();
@@ -55,25 +56,35 @@ my $backupdir= $opt_d;
 my $crit = $opt_c;
 my $warn = $opt_w;
 
-# XXX: this should be a complete backup registry instead
-my @hosts=qx{ls $backupdir};
+my @hosts;
+if (defined($opt_o)) {
+	@hosts=qx{hostname -f};
+} else {
+	# XXX: this should be a complete backup registry instead
+	@hosts=qx{ls $backupdir};
+}
 
 chdir($backupdir);
 my ($state, $message, @vservers, $host);
 foreach $host (@hosts) {
 	chomp($host);
+	if ($opt_o) {
+		$dir = $backupdir;
+	} else {
+		$dir = $host;
+	}
 	my $flag="";
 	my $type="unknown";
 	my $extra_msg="";
 	@vservers = ();
 	$state = $STATE_UNKNOWN;
 	$message = "???";
-	if (-d $host) {
+	if (-d $dir) {
 		# guess the backup type and find a proper stamp file to compare
 		# XXX: the backup type should be part of the machine registry
 		my $last_bak;
-		if (-d "$host/rdiff-backup") {
-			$flag="$host/rdiff-backup/rdiff-backup-data/backup.log";
+		if (-d "$dir/rdiff-backup") {
+			$flag="$dir/rdiff-backup/rdiff-backup-data/backup.log";
 			$type="rdiff";
 			if (open(FLAG, $flag)) {
 				while (<FLAG>) {
@@ -92,21 +103,21 @@ foreach $host (@hosts) {
 			}
 			close(FLAG);
 			foreach my $vserver_dir (@vserver_dirs) {
-				$dir = "$host/rdiff-backup$vserver_dir";
+				$dir = "$dir/rdiff-backup$vserver_dir";
     				if (opendir(DIR, $dir)) {
     					@vservers = grep { /^[^\.]/ && -d "$dir/$_" } readdir(DIR);
     					closedir DIR;
 				}
 			}
-		} elsif (-d "$host/dump") {
+		} elsif (-d "$dir/dump") {
 			# XXX: this doesn't check backup consistency
-			$flag="$host/dump/" . `ls -tr $host/dump | tail -1`;
+			$flag="$dir/dump/" . `ls -tr $dir/dump | tail -1`;
 			chomp($flag);
 			$type="dump";
-		} elsif (-d "$host/dup") {
+		} elsif (-r "$dir/rsync.log") {
 			# XXX: this doesn't check backup consistency
-			$flag="$host/dup";
-			$type="duplicity";
+			$flag="$dir/rsync.log";
+			$type="rsync";
 		} else {
 			$message = "unknown system";
 			next;
