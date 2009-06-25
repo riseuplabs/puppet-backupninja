@@ -114,6 +114,11 @@ foreach $host (@hosts) {
 			$flag="$dir/dump/" . `ls -tr $dir/dump | tail -1`;
 			chomp($flag);
 			$type="dump";
+		} elsif (-d "$dir/dup") {
+			# XXX: this doesn't check backup consistency
+			$flag="$dir/dup/" . `ls -tr $dir/dup | tail -1`;
+			chomp($flag);
+			$type="dup";
 		} elsif (-r "$dir/rsync.log") {
 			# XXX: this doesn't check backup consistency
 			$flag="$dir/rsync.log";
