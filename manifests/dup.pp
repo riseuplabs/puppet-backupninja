@@ -106,6 +106,7 @@ define backupninja::duplicity( $order  = 90,
     user       => $destuser,
     host       => $desthost,
     installkey => $installkey,
+    keytype    => $backupkeytype,
   }
 
   # the backupninja rule for this duplicity backup
