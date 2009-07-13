@@ -62,17 +62,21 @@ define backupninja::duplicity( $order  = 90,
                                             "/home/*/.gnupg",
                                             "/home/*/.gpg",
                                             "/home/*/.ssh",
-                                            "/home/*/gtk-gnutella-downloads"],
+                                            "/home/*/gtk-gnutella-downloads",
+                                            "/etc/ssh/*" ],
                                $vsinclude = false,
                                # [dest]
                                $incremental   = "yes",
                                $keep          = 60,
-                               $bandwithlimit = "128",
+                               $bandwithlimit = "0",
                                $sshoptions    = false,
                                $destdir       = "/backups",
                                $desthost      = false,
                                $destuser      = false,
-                               # options to backupninja's module sandbox
+                               # configs to backupninja client
+                               $backupkeystore       = false,
+                               $backupkeytype        = false,
+                               # options to backupninja server sandbox
                                $ssh_dir_manage       = true,
                                $ssh_dir              = false,
                                $authorized_keys_file = false,
@@ -94,6 +98,7 @@ define backupninja::duplicity( $order  = 90,
     authorized_keys_file => $authorized_keys_file,
     installuser          => $installuser,
     backuptag            => $backuptag,
+    backupkeys           => $backupkeystore,
   }
   
   # the client's ssh key
