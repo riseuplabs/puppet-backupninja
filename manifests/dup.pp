@@ -111,7 +111,7 @@ define backupninja::duplicity( $order  = 90,
   }
 
   # the backupninja rule for this duplicity backup
-  file { "${backupninja::client::configdir}/${order}_${name}.duplicity":
+  file { "${backupninja::client::configdir}/${order}_${name}.dup":
     ensure  => $ensure,
     content => template('backupninja/dup.conf.erb'),
     owner   => root,
