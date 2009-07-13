@@ -99,6 +99,7 @@ define backupninja::duplicity( $order  = 90,
     installuser          => $installuser,
     backuptag            => $backuptag,
     backupkeys           => $backupkeystore,
+    keytype              => $backupkeytype,
   }
   
   # the client's ssh key
