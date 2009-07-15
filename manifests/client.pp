@@ -87,9 +87,6 @@ class backupninja::client {
 }
 
 class backupninja::client::maildir inherits backupninja::client {
-  case $rsync_ensure_version {
-    '': { $rsync_ensure_version = "present" }
-  }
 
   if !defined(Package["rsync"]) {
     if $rsync_ensure_version == '' { $rsync_ensure_version = 'installed' }
@@ -100,14 +97,11 @@ class backupninja::client::maildir inherits backupninja::client {
 }
 
 class backupninja::client::rdiff-backup inherits backupninja::client {
-  case $rdiff-backup_ensure_version {
-    '': { $rdiff-backup_ensure_version = "present" }
-  }
 
   if !defined(Package["rdiff-backup"]) {
-    if $rdiff-backup_ensure_version == '' { $rdiff-backup_ensure_version = 'installed' }
+    if $rdiff_backup_ensure_version == '' { $rdiff_backup_ensure_version = 'installed' }
     package { 'rdiff-backup':
-      ensure => $rdiff-backup_ensure_version,
+      ensure => $rdiff_backup_ensure_version,
     }
   }
 }
