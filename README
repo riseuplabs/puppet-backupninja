@@ -20,6 +20,7 @@ backupninja::mysql { all_databases:
 	sqldump => true
 }
 
+include backupninja::client::rdiff_backup
 backupninja::rdiff { backup_all:
 	directory => '/media/backupdisk',
 	include => ['/var/backups', '/home', '/var/lib/dpkg/status'],
@@ -34,6 +35,16 @@ A remote rdiff backup handler:
         directory => "/backup/$fqdn",
         user => "backup-$hostname",
     }
+
+If you include the backupninja::client::rdiff_backup class, you will
+get the rdiff-backup package installed automatically, this also works
+for the backupninja::client::maildir class (installs needed rsync package)
+
+If you need to specify a specific version of the rdiff-backup, or rsync package, you can do so
+by specifying the variables:
+
+$rdiff_backup_ensure_version = "1.2.5-1~bpo40+1"
+$rsync_ensure_version = "3.0.6-1~bpo50+1"
 
 If you configure a backupninja::server, it will collect those users and create
 them.  We have yet to create proper authorized_keys management to make that
