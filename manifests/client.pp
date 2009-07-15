@@ -96,7 +96,7 @@ class backupninja::client::maildir inherits backupninja::client {
   } 
 }
 
-class backupninja::client::rdiff-backup inherits backupninja::client {
+class backupninja::client::rdiff_backup inherits backupninja::client {
 
   if !defined(Package["rdiff-backup"]) {
     if $rdiff_backup_ensure_version == '' { $rdiff_backup_ensure_version = 'installed' }
