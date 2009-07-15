@@ -86,4 +86,28 @@ class backupninja::client {
   }
 }
 
+class backupninja::client::maildir inherits backupninja::client {
+  case $rsync_ensure_version {
+    '': { $rsync_ensure_version = "present" }
+  }
 
+  if !defined(Package["rsync"]) {
+    if $rsync_ensure_version == '' { $rsync_ensure_version = 'installed' }
+    package { 'rsync':
+      ensure => $rsync_ensure_version,
+    }
+  } 
+}
+
+class backupninja::client::rdiff-backup inherits backupninja::client {
+  case $rdiff-backup_ensure_version {
+    '': { $rdiff-backup_ensure_version = "present" }
+  }
+
+  if !defined(Package["rdiff-backup"]) {
+    if $rdiff-backup_ensure_version == '' { $rdiff-backup_ensure_version = 'installed' }
+    package { 'rdiff-backup':
+      ensure => $rdiff-backup_ensure_version,
+    }
+  }
+}
