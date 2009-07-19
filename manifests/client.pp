@@ -86,4 +86,22 @@ class backupninja::client {
   }
 }
 
+class backupninja::client::maildir inherits backupninja::client {
 
+  if !defined(Package["rsync"]) {
+    if $rsync_ensure_version == '' { $rsync_ensure_version = 'installed' }
+    package { 'rsync':
+      ensure => $rsync_ensure_version,
+    }
+  } 
+}
+
+class backupninja::client::rdiff_backup inherits backupninja::client {
+
+  if !defined(Package["rdiff-backup"]) {
+    if $rdiff_backup_ensure_version == '' { $rdiff_backup_ensure_version = 'installed' }
+    package { 'rdiff-backup':
+      ensure => $rdiff_backup_ensure_version,
+    }
+  }
+}
