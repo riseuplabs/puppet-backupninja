@@ -44,11 +44,13 @@ define backupninja::rdiff(
         authorized_keys_file => $authorized_keys_file, installuser => $installuser,
         backuptag => $backuptag, keytype => $backupkeytype,
       }
-      
-      backupninja::client::key
-      {
-        "${user}-${name}": user => $user, host => $host,
-        installkey => $installkey
+     
+      if !defined(Backupninja::client::key["${user}-${name}"]) {
+        backupninja::client::key
+        {
+          "${user}-${name}": user => $user, host => $host,
+          installkey => $installkey
+        }
       }
     }
   }
