@@ -28,6 +28,9 @@ define backupninja::rdiff(
   $backuptag = false)
 {
   include backupninja::client
+
+  case $directory { false: { err("need to define a directory for where the backups should go!") } }
+  
   case $type {
     'remote': {
       case $host { false: { err("need to define a host for remote backups!") } }
