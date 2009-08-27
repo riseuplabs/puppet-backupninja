@@ -30,21 +30,25 @@
 #
 # Some notes about this handler:
 #
+#   - When specifying a password, be sure to enclose it in single quotes,
+#     this is particularly important if you have any special characters, such
+#     as a $ which puppet will attempt to interpret resulting in a different
+#     password placed in the file than you expect!
 #   - There's no support for a 'local' type in backupninja's duplicity
 #     handler on version 0.9.6-4, which is the version available in stable and
 #     testing debian repositories by the time of this writing.
 define backupninja::duplicity( $order  = 90,
                                $ensure = present,
                                # options to the config file
-                               $options     = false, #
-                               $nicelevel   = 0, #
-                               $testconnect = "yes", #
-                               $tmpdir      = "/var/tmp/duplicity", #
+                               $options     = false,
+                               $nicelevel   = false,
+                               $testconnect = false,
+                               $tmpdir      = false,
                                # [gpg]
-                               $sign       = "no",
+                               $sign       = false,
                                $encryptkey = false,
                                $signkey    = false,
-                               $password   = "a_very_complicated_passphrase",
+                               $password   = false,
                                # [source]
                                $include = [ "/var/spool/cron/crontabs",
                                             "/var/backups",
@@ -67,10 +71,10 @@ define backupninja::duplicity( $order  = 90,
                                $vsinclude = false,
                                # [dest]
                                $incremental   = "yes",
-                               $keep          = 60,
-                               $bandwithlimit = "0",
+                               $keep          = false,
+                               $bandwithlimit = false,
                                $sshoptions    = false,
-                               $destdir       = "/backups",
+                               $destdir       = false,
                                $desthost      = false,
                                $destuser      = false,
                                # configs to backupninja client
@@ -88,7 +92,9 @@ define backupninja::duplicity( $order  = 90,
   # the client with configs for this machine
   include backupninja::client
 
-  case $host { false: { err("need to define a host for remote backups!") } }
+  case $desthost { false: { err("need to define a destination host for remote backups!") } }
+  case $destdir { false: { err("need to define a destination directory for remote backups!") } }
+  case $password { false: { err("a password is necessary either to unlock the GPG key, or for symmetric encryption!") } }
   
   # guarantees there's a configured backup space for this backup
   backupninja::server::sandbox { "${user}-${name}":
