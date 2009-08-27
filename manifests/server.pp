@@ -30,8 +30,8 @@ class backupninja::server {
   # get created on the server
   define sandbox(
     $user = false, $host = false, $installuser = true, $dir = false, $manage_ssh_dir = true,
-    $ssh_dir = false, $authorized_keys_file = false, $backupkeys = false, $uid = false,
-    $gid = "backupninjas", $backuptag = false)
+    $ssh_dir = false, $authorized_keys_file = false, $backupkeys = false, $keytype = "rsa",
+    $uid = false, $gid = "backupninjas", $backuptag = false)
   {
     
     $real_user = $name ? {
@@ -84,7 +84,7 @@ class backupninja::server {
         @@file { "${real_ssh_dir}/${real_authorized_keys_file}":
           ensure => present,
           mode => 0644, owner => 0, group => 0,
-          source => "$real_backupkeys/${user}_id_rsa.pub",
+          source => "$real_backupkeys/${user}_id_${keytype}.pub",
           require => File["${real_ssh_dir}"],
           tag => "$real_backuptag",
         }
