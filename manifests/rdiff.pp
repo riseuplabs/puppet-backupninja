@@ -32,12 +32,13 @@ define backupninja::rdiff(
     'remote': {
       case $host { false: { err("need to define a host for remote backups!") } }
       
+      $real_home = $home ? {
+        false => $directory,
+        default => $home,
+      }
+
       backupninja::server::sandbox
       {
-        $real_home = $home ? {
-          false => $directory,
-          default => $home,
-        }
         "${user}-${name}": user => $user, host => $host, dir => $real_home,
         manage_ssh_dir => $ssh_dir_manage, ssh_dir => $ssh_dir,
         authorized_keys_file => $authorized_keys_file, installuser => $installuser,
