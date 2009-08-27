@@ -36,10 +36,10 @@
 define backupninja::duplicity( $order  = 90,
                                $ensure = present,
                                # options to the config file
-                               $options     = false, #
-                               $nicelevel   = 0, #
-                               $testconnect = "yes", #
-                               $tmpdir      = "/var/tmp/duplicity", #
+                               $options     = false,
+                               $nicelevel   = 0,
+                               $testconnect = "yes",
+                               $tmpdir      = "/var/tmp/duplicity",
                                # [gpg]
                                $sign       = "no",
                                $encryptkey = false,
