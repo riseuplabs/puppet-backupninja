@@ -85,7 +85,7 @@ class backupninja::server {
             }
           }
         } 
-        if !defined(File["$real_ssh_dir"]) {
+        if !defined(File["${real_ssh_dir}/${real_authorized_keys_file}"]) {
           @@file { "${real_ssh_dir}/${real_authorized_keys_file}":
             ensure => present,
             mode => 0644, owner => 0, group => 0,
@@ -96,7 +96,7 @@ class backupninja::server {
         }
         case $uid {
           false: {
-            if !defined(File["$real_ssh_dir"]) {
+            if !defined(File["$real_user"]) {
               @@user { "$user":
                 ensure  => "present",
                 gid     => "$gid",
@@ -111,8 +111,8 @@ class backupninja::server {
             }
           }
           default: {
-              if !defined(File["$real_ssh_dir"]) {
-              @@user { "$user":
+              if !defined(File["$real_user"]) {
+              @@user { "$real_user":
                 ensure  => "present",
                 uid     => "$uid",
                 gid     => "$gid",
