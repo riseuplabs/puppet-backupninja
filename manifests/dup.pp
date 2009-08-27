@@ -88,7 +88,8 @@ define backupninja::duplicity( $order  = 90,
   # the client with configs for this machine
   include backupninja::client
 
-  case $host { false: { err("need to define a host for remote backups!") } }
+  case $desthost { false: { err("need to define a destination host for remote backups!") } }
+  case $destdir { false: { err("need to define a destination directory for remote backups!") } }
   
   # guarantees there's a configured backup space for this backup
   backupninja::server::sandbox { "${user}-${name}":
