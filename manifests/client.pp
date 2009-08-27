@@ -72,14 +72,18 @@ class backupninja::client {
 
     case $install_key {
       true: {
-        file { "${backupninja::client::real_keydestination}":
-          ensure => directory,
-          mode => 0700, owner => $key_owner, group => $key_group,
+        if !defined(File["${backupninja::client::real_keydestination}"]) {
+          file { "${backupninja::client::real_keydestination}":
+            ensure => directory,
+            mode => 0700, owner => $key_owner, group => $key_group,
+          }
         }
-        file { "${backupninja::client::real_keydestination}/id_${key_type}":
-          source => "${key_store}/${real_user}_id_${key_type}",
-          mode => 0400, owner => $key_owner, group => $key_group,
-          require => File["${backupninja::client::real_keydestination}"],
+        if !defined(File["${backupninja::client::real_keydestination/id_${key_type}"]) {
+          file { "${backupninja::client::real_keydestination}/id_${key_type}":
+            source => "${key_store}/${real_user}_id_${key_type}",
+            mode => 0400, owner => $key_owner, group => $key_group,
+            require => File["${backupninja::client::real_keydestination}"],
+          }
         }
       }
     }
