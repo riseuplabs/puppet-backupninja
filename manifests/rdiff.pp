@@ -25,7 +25,7 @@ define backupninja::rdiff(
                "/home", "/usr/local/*bin", "/var/lib/dpkg/status*" ],
   $vsinclude = false, $keep = 30, $sshoptions = false, $options = false, $ssh_dir_manage = true,
   $ssh_dir = false, $authorized_keys_file = false, $installuser = true, $installkey = true,
-  $backuptag = false)
+  $backuptag = false, $home = false)
 {
   include backupninja::client
   case $type {
@@ -34,7 +34,11 @@ define backupninja::rdiff(
       
       backupninja::server::sandbox
       {
-        "${user}-${name}": user => $user, host => $host, dir => $directory,
+        $real_home = $home ? {
+          false => $directory,
+          default => $home,
+        }
+        "${user}-${name}": user => $user, host => $host, dir => $real_home,
         manage_ssh_dir => $ssh_dir_manage, ssh_dir => $ssh_dir,
         authorized_keys_file => $authorized_keys_file, installuser => $installuser,
         backuptag => $backuptag
