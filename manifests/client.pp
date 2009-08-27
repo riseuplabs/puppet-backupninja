@@ -109,3 +109,14 @@ class backupninja::client::rdiff_backup inherits backupninja::client {
     }
   }
 }
+
+class backupninja::client::duplicity inherits backupninja::client {
+
+  if !defined(Package["duplicity"]) {
+    if $duplicity_ensure_version == '' { $duplicity_ensure_version = 'installed' }
+    package { 'duplicity':
+      ensure => $duplicity_ensure_version,
+    }
+  }
+}
+  

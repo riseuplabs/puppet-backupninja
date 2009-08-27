@@ -84,8 +84,6 @@ define backupninja::duplicity( $order  = 90,
                                $backuptag            = false,
                                # key options
                                $installkey           = true ) {
-  # needed packages
-  package { "duplicity": ensure => installed }
 
   # the client with configs for this machine
   include backupninja::client
