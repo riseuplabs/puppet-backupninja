@@ -75,7 +75,7 @@ define backupninja::duplicity( $order  = 90,
                                $destuser      = false,
                                # configs to backupninja client
                                $backupkeystore       = false,
-                               $backupkeytype        = false,
+                               $backupkeytype        = '',
                                # options to backupninja server sandbox
                                $ssh_dir_manage       = true,
                                $ssh_dir              = false,

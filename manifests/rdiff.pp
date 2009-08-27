@@ -25,7 +25,7 @@ define backupninja::rdiff(
                "/home", "/usr/local/*bin", "/var/lib/dpkg/status*" ],
   $vsinclude = false, $keep = 30, $sshoptions = false, $options = false, $ssh_dir_manage = true,
   $ssh_dir = false, $authorized_keys_file = false, $installuser = true, $installkey = true,
-  $backuptag = false, $home = false, $backupkeytype = false)
+  $backuptag = false, $home = false, $backupkeytype = '')
 {
   include backupninja::client
   case $type {
