@@ -84,6 +84,8 @@ define backupninja::duplicity( $order  = 90,
                                $backuptag            = false,
                                # key options
                                $installkey           = true ) {
+
+  # the client with configs for this machine
   include backupninja::client
 
   case $host { false: { err("need to define a host for remote backups!") } }
