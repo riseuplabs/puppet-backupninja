@@ -90,6 +90,7 @@ define backupninja::duplicity( $order  = 90,
 
   case $desthost { false: { err("need to define a destination host for remote backups!") } }
   case $destdir { false: { err("need to define a destination directory for remote backups!") } }
+  case $password { false: { err("a password is necessary either to unlock the GPG key, or for symmetric encryption!") } }
   
   # guarantees there's a configured backup space for this backup
   backupninja::server::sandbox { "${user}-${name}":
