@@ -96,8 +96,8 @@ class backupninja::server {
         }
         case $uid {
           false: {
-            if !defined(File["$real_user"]) {
-              @@user { "$user":
+            if !defined(User["$real_user"]) {
+              @@user { "$real_user":
                 ensure  => "present",
                 gid     => "$gid",
                 comment => "$name backup sandbox",
@@ -111,7 +111,7 @@ class backupninja::server {
             }
           }
           default: {
-              if !defined(File["$real_user"]) {
+              if !defined(User["$real_user"]) {
               @@user { "$real_user":
                 ensure  => "present",
                 uid     => "$uid",
