@@ -30,6 +30,10 @@
 #
 # Some notes about this handler:
 #
+#   - When specifying a password, be sure to enclose it in single quotes,
+#     this is particularly important if you have any special characters, such
+#     as a $ which puppet will attempt to interpret resulting in a different
+#     password placed in the file than you expect!
 #   - There's no support for a 'local' type in backupninja's duplicity
 #     handler on version 0.9.6-4, which is the version available in stable and
 #     testing debian repositories by the time of this writing.
