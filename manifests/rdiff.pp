@@ -51,7 +51,8 @@ define backupninja::rdiff(
       backupninja::client::key
       {
         "${user}-${name}": user => $user, host => $host,
-        installkey => $installkey
+        installkey => $installkey,
+        keytype => $backupkeytype,
       }
     }
   }
