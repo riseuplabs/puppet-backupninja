@@ -66,6 +66,7 @@ class backupninja::client {
 	default => $keystore,
     }
     $key_type = $keytype ? {
+    	''    => "${backupninja::client::real_keytype}",
     	false => "${backupninja::client::real_keytype}",
 	default => $keytype,
     }
