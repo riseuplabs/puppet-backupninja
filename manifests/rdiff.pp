@@ -48,12 +48,10 @@ define backupninja::rdiff(
         backuptag => $backuptag, keytype => $backupkeytype,
       }
      
-      if !defined(Backupninja::client::key["${user}-${name}"]) {
-        backupninja::client::key
-        {
-          "${user}-${name}": user => $user, host => $host,
-          installkey => $installkey
-        }
+      backupninja::client::key
+      {
+        "${user}-${name}": user => $user, host => $host,
+        installkey => $installkey
       }
     }
   }
