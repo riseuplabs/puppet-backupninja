@@ -27,7 +27,7 @@ define backupninja::rdiff(
   $ssh_dir = false, $authorized_keys_file = false, $installuser = true, $installkey = true,
   $backuptag = false, $home = false, $backupkeytype = "rsa")
 {
-  include backupninja::client
+  include backupninja::client::defaults
 
   case $directory { false: { err("need to define a directory for where the backups should go!") } }
   
@@ -55,13 +55,13 @@ define backupninja::rdiff(
       }
     }
   }
-  file { "${backupninja::client::configdir}/${order}_${name}.rdiff":
+  file { "${backupninja::client::defaults::configdir}/${order}_${name}.rdiff":
     ensure => $ensure,
     content => template('backupninja/rdiff.conf.erb'),
     owner => root,
     group => root,
     mode => 0600,
-    require => File["${backupninja::client::configdir}"]
+    require => File["${backupninja::client::defaults::configdir}"]
   }
 }
   

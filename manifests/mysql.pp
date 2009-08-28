@@ -20,13 +20,13 @@ define backupninja::mysql(
   $sqldump = false, $compress = false, $configfile = '/etc/mysql/debian.cnf',
   $vsname = false)
 {
-  include backupninja::client
-  file { "${backupninja::client::configdir}/${order}_${name}.mysql":
+  include backupninja::client::defaults
+  file { "${backupninja::client::defaults::configdir}/${order}_${name}.mysql":
     ensure => $ensure,
     content => template('backupninja/mysql.conf.erb'),
     owner => root,
     group => root,
     mode => 0600,
-    require => File["${backupninja::client::configdir}"]
+    require => File["${backupninja::client::defaults::configdir}"]
   }
 }

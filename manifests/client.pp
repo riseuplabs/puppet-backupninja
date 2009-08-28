@@ -1,4 +1,4 @@
-class backupninja::client {
+class backupninja::client::defaults {
   $configdir = $cfg_override ? {
     '' => "/etc/backup.d",
     default => $cfg_override,
@@ -38,6 +38,9 @@ class backupninja::client {
   file { $configdir:
     ensure => directory
   }
+}
+
+class backupninja::client inherits backupninja::client::defaults {
   define key(
     $user = false, $host = false, $installkey=false, $keyowner=false,
     $keygroup=false, $keystore=false, $keytype=false)
@@ -51,40 +54,40 @@ class backupninja::client {
       default => $host
     }
     $install_key = $installkey ? {
-    	false => "${backupninja::client::real_keymanage}",
+    	false => "${backupninja::client::defaults::real_keymanage}",
 	default => $installkey,
     }
     $key_owner = $keyowner ? {
-    	false => "${backupninja::client::real_keyowner}",
+    	false => "${backupninja::client::defaults::real_keyowner}",
 	default => $keyowner,
     }
     $key_group = $keygroup ? {
-    	false => "${backupninja::client::real_keygroup}",
+    	false => "${backupninja::client::defaults::real_keygroup}",
 	default => $keygroup,
     }
     $key_store = $keystore ? {
-    	false => "${backupninja::client::real_keystore}",
+    	false => "${backupninja::client::defaults::real_keystore}",
 	default => $keystore,
     }
     $key_type = $keytype ? {
-    	''    => "${backupninja::client::real_keytype}",
-    	false => "${backupninja::client::real_keytype}",
+    	''    => "${backupninja::client::defaults::real_keytype}",
+    	false => "${backupninja::client::defaults::real_keytype}",
 	default => $keytype,
     }
 
     case $install_key {
       true: {
-        if !defined(File["${backupninja::client::real_keydestination}"]) {
-          file { "${backupninja::client::real_keydestination}":
+        if !defined(File["${backupninja::client::defaults::real_keydestination}"]) {
+          file { "${backupninja::client::defaults::real_keydestination}":
             ensure => directory,
             mode => 0700, owner => $key_owner, group => $key_group,
           }
         }
-        if !defined(File["${backupninja::client::real_keydestination/id_${key_type}"]) {
-          file { "${backupninja::client::real_keydestination}/id_${key_type}":
+        if !defined(File["${backupninja::client::defaults::real_keydestination/id_${key_type}"]) {
+          file { "${backupninja::client::defaults::real_keydestination}/id_${key_type}":
             source => "${key_store}/${real_user}_id_${key_type}",
             mode => 0400, owner => $key_owner, group => $key_group,
-            require => File["${backupninja::client::real_keydestination}"],
+            require => File["${backupninja::client::defaults::real_keydestination}"],
           }
         }
       }
@@ -92,7 +95,7 @@ class backupninja::client {
   }
 }
 
-class backupninja::client::maildir inherits backupninja::client {
+class backupninja::client::maildir inherits backupninja::client::defaults {
 
   if !defined(Package["rsync"]) {
     if $rsync_ensure_version == '' { $rsync_ensure_version = 'installed' }
@@ -102,7 +105,7 @@ class backupninja::client::maildir inherits backupninja::client {
   } 
 }
 
-class backupninja::client::rdiff_backup inherits backupninja::client {
+class backupninja::client::rdiff_backup inherits backupninja::client::defaults {
 
   if !defined(Package["rdiff-backup"]) {
     if $rdiff_backup_ensure_version == '' { $rdiff_backup_ensure_version = 'installed' }
@@ -112,7 +115,7 @@ class backupninja::client::rdiff_backup inherits backupninja::client {
   }
 }
 
-class backupninja::client::duplicity inherits backupninja::client {
+class backupninja::client::duplicity inherits backupninja::client::defaults {
 
   if !defined(Package["duplicity"]) {
     if $duplicity_ensure_version == '' { $duplicity_ensure_version = 'installed' }

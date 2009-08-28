@@ -22,7 +22,7 @@ define backupninja::maildir(
   $remove = false, $multiconnection = yes, $keepdaily='4', $keepweekly='2',
   $keepmonthly='2')
 {
-  include backupninja::client
+  include backupninja::client::defaults
                           
   case $srcdir { false: { err("need to define a source directory to backup!") } }
   case $destdir { false: { err("need to define a destination directory to backup!") } }
@@ -30,12 +30,12 @@ define backupninja::maildir(
   case $destuser { false: { err("need to define a destination user for backups!") } }
   case $destid_file { false: { err("need to define a ssh key id file to use!") } }
   
-  file { "${backupninja::client::configdir}/${order}_${name}.maildir":
+  file { "${backupninja::client::defaults::configdir}/${order}_${name}.maildir":
     ensure => $ensure,
     content => template('backupninja/maildir.conf.erb'),
     owner => root,
     group => root,
     mode => 0600,
-    require => File["${backupninja::client::configdir}"]
+    require => File["${backupninja::client::defaults::configdir}"]
   }
 }
