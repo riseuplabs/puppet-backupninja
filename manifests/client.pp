@@ -8,7 +8,8 @@ class backupninja::client {
     default => $backupkeystore,
   }
   $real_keytype = $backupkeytype ? {
-    '' => 'rsa',
+    ''      => 'rsa',
+    false   => 'rsa',
     default => $backupkeytype,
   }
   $real_keydestination = $keydestination ? {
