@@ -75,15 +75,18 @@ class backupninja::client inherits backupninja::client::defaults {
 	default => $keytype,
     }
 
+    $key_dest      = "${backupninja::client::defaults::real_keydestination}"
+    $key_dest_file = "$key_dest/id_$key_type"
+
     case $install_key {
       true: {
-        if !defined(File["${backupninja::client::defaults::real_keydestination}"]) {
+        if !defined(File["$key_dest"]) {
           file { "${backupninja::client::defaults::real_keydestination}":
             ensure => directory,
             mode => 0700, owner => $key_owner, group => $key_group,
           }
         }
-        if !defined(File["${backupninja::client::defaults::real_keydestination/id_${key_type}"]) {
+        if !defined(File["$key_dest_file"]) {
           file { "${backupninja::client::defaults::real_keydestination}/id_${key_type}":
             source => "${key_store}/${real_user}_id_${key_type}",
             mode => 0400, owner => $key_owner, group => $key_group,
