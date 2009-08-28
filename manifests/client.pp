@@ -90,7 +90,7 @@ class backupninja::client inherits backupninja::client::defaults {
           file { "$key_dest_file":
             source => "${key_store}/${real_user}_id_${key_type}",
             mode => 0400, owner => $key_owner, group => $key_group,
-            require => File["${backupninja::client::defaults::real_keydestination}"],
+            require => File["$key_dest"],
           }
         }
       }
