@@ -103,10 +103,13 @@ foreach $host (@hosts) {
 			}
 			close(FLAG);
 			foreach my $vserver_dir (@vserver_dirs) {
-				$dir = "$dir/rdiff-backup$vserver_dir";
-    				if (opendir(DIR, $dir)) {
-    					@vservers = grep { /^[^\.]/ && -d "$dir/$_" } readdir(DIR);
+				$vsdir = "$dir/rdiff-backup$vserver_dir";
+    				if (opendir(DIR, $vsdir)) {
+    					@vservers = grep { /^[^\.]/ && -d "$vsdir/$_" } readdir(DIR);
+					$opt_v && print STDERR "found vservers $vsdir: @vservers\n";
     					closedir DIR;
+				} else {
+					$opt_v && print STDERR "no vserver in $vsdir\n";
 				}
 			}
 		} elsif (-d "$dir/dump") {
