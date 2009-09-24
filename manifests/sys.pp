@@ -22,13 +22,13 @@ define backupninja::sys($order = 30,
                            $hardwarefile = '/var/backups/hardware.txt',
                            $dohwinfo = yes
                           ) {
-                          include backupninja::client
-	file { "${backupninja::client::configdir}/${order}_${name}.sys":
+                          include backupninja::client::defaults
+	file { "${backupninja::client::defaults::configdir}/${order}_${name}.sys":
 		ensure => $ensure,
 		content => template('backupninja/sys.conf.erb'),
 		owner => root,
 		group => root,
 		mode => 0600,
-		require => File["${backupninja::client::configdir}"]
+		require => File["${backupninja::client::defaults::configdir}"]
 	}
 }

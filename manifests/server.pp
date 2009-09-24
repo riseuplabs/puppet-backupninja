@@ -48,7 +48,7 @@ class backupninja::server {
   # get created on the server
   define sandbox(
     $user = false, $host = false, $installuser = true, $dir = false, $manage_ssh_dir = true,
-    $ssh_dir = false, $authorized_keys_file = false, $key = false, $key_type = 'ssh-dss', $backupkeys = false, $uid = false,
+    $ssh_dir = false, $authorized_keys_file = false, $key = false, $keytype = 'dss', $backupkeys = false, $uid = false,
     $gid = "backupninjas", $backuptag = false)
   {
     
@@ -78,38 +78,44 @@ class backupninja::server {
       default => $authorized_keys_file,
     }
     $real_backuptag = $backuptag ? {
-      false => "backupninja-$fqdn",
+      false => "backupninja-$real_host",
       default => $backuptag,
     }
       
     # configure a passive service check for backups
     nagios2::passive_service { "backups-$real_host": nagios2_host_name => $real_host, nagios2_description => 'backups', servicegroups => "backups" }
 
-    @@file { "$real_dir":
-      ensure => directory,
-      mode => 0750, owner => $real_user, group => 0,
-      tag => "$real_backuptag",
+    if !defined(File["$real_dir"]) {
+      @@file { "$real_dir":
+        ensure => directory,
+        mode => 0750, owner => $real_user, group => 0,
+        tag => "$real_backuptag",
+      }
     }
     case $installuser {
       true: {
         case $manage_ssh_dir {
           true: {
-            @@file { "${real_ssh_dir}":
-              ensure => directory,
-              mode => 0700, owner => $real_user, group => 0,
-              require => [User[$real_user], File["$real_dir"]],
-              tag => "$real_backuptag",
+            if !defined(File["$real_ssh_dir"]) {
+              @@file { "${real_ssh_dir}":
+                ensure => directory,
+                mode => 0700, owner => $real_user, group => 0,
+                require => [User[$real_user], File["$real_dir"]],
+                tag => "$real_backuptag",
+              }
             }
           }
         } 
 	case $key {
 	  false: {
-            @@file { "${real_ssh_dir}/${real_authorized_keys_file}":
-              ensure => present,
-              mode => 0644, owner => 0, group => 0,
-              source => "$real_backupkeys/${real_user}_id_rsa.pub",
-              require => File["${real_ssh_dir}"],
-              tag => "$real_backuptag",
+            if !defined(File["${real_ssh_dir}/${real_authorized_keys_file}"]) {
+              @@file { "${real_ssh_dir}/${real_authorized_keys_file}":
+                ensure => present,
+                mode => 0644, owner => 0, group => 0,
+                source => "$real_backupkeys/${real_user}_id_${keytype}.pub",
+                require => File["${real_ssh_dir}"],
+                tag => "$real_backuptag",
+              }
             }
 	  }
 	  default: {
@@ -125,30 +131,34 @@ class backupninja::server {
 	}
         case $uid {
           false: {
-            @@user { "$real_user":
-              ensure  => "present",
-              gid     => "$gid",
-              comment => "$name backup sandbox",
-              home    => "$real_dir",
-              managehome => true,
-              shell   => "/bin/sh",
-              password => '*',
-	      require => Group['backupninjas'],
-              tag => "$real_backuptag"
+            if !defined(User["$real_user"]) {
+              @@user { "$real_user":
+                ensure  => "present",
+                gid     => "$gid",
+                comment => "$name backup sandbox",
+                home    => "$real_dir",
+                managehome => true,
+                shell   => "/bin/sh",
+                password => '*',
+	        require => Group['backupninjas'],
+                tag => "$real_backuptag"
+              }
             }
           }
           default: {
-            @@user { "$real_user":
-              ensure  => "present",
-              uid     => "$uid",
-              gid     => "$gid",
-              comment => "$name backup sandbox",
-              home    => "$real_dir",
-              managehome => true,
-              shell   => "/bin/sh",
-              password => '*',
-	      require => Group['backupninjas'],
-              tag => "$real_backuptag"
+            if !defined(User["$real_user"]) {
+              @@user { "$real_user":
+                ensure  => "present",
+                uid     => "$uid",
+                gid     => "$gid",
+                comment => "$name backup sandbox",
+                home    => "$real_dir",
+                managehome => true,
+                shell   => "/bin/sh",
+                password => '*',
+	        require => Group['backupninjas'],
+                tag => "$real_backuptag"
+              }
             }
           }
         }

@@ -25,7 +25,7 @@ define backupninja::rdiff(
                "/home", "/usr/local/*bin", "/var/lib/dpkg/status*" ],
   $vsinclude = false, $keep = 30, $sshoptions = false, $options = '--force', $ssh_dir_manage = true,
   $ssh_dir = false, $authorized_keys_file = false, $installuser = true, $installkey = true, $key = false,
-  $backuptag = false, $extras = false)
+  $backuptag = false, $home = false, $backupkeytype = "rsa", $backupkeystore = false, $extras = false)
 {
   $real_backuptag = $backuptag ? {
       false => "backupninja-$host",
@@ -33,33 +33,41 @@ define backupninja::rdiff(
   }
 
   $directory = "$home/rdiff-backup/"
-  include backupninja::client
+  include backupninja::client::defaults
+
   case $type {
     'remote': {
       case $host { false: { err("need to define a host for remote backups!") } }
       
+      $real_home = $home ? {
+        false => $directory,
+        default => $home,
+      }
+
       backupninja::server::sandbox
       {
         "${user}-${name}": user => $user, host => $fqdn, dir => $home,
         manage_ssh_dir => $ssh_dir_manage, ssh_dir => $ssh_dir, key => $key,
         authorized_keys_file => $authorized_keys_file, installuser => $installuser,
-        backuptag => $real_backuptag
+        backuptag => $real_backuptag, keytype => $backupkeytype, backupkeys => $backupkeystore,
       }
-      
+     
       backupninja::client::key
       {
         "${user}-${name}": user => $user, host => $host,
-        installkey => $installkey
+        installkey => $installkey,
+        keytype => $backupkeytype,
+        keystore => $backupkeystore,
       }
     }
   }
-  file { "${backupninja::client::configdir}/${order}_${name}.rdiff":
+  file { "${backupninja::client::defaults::configdir}/${order}_${name}.rdiff":
     ensure => $ensure,
     content => template('backupninja/rdiff.conf.erb'),
     owner => root,
     group => root,
     mode => 0600,
-    require => File["${backupninja::client::configdir}"]
+    require => File["${backupninja::client::defaults::configdir}"]
   }
   include backupninja::rdiff-installed
 }

@@ -3,7 +3,7 @@
 # write them to the config file as-is.
 #
 define backupninja::config(
-  $configfile = '/etc/backupninja.conf', $loglvl = 4, $when = '01:00',
+  $configfile = '/etc/backupninja.conf', $loglvl = 4, $when = 'everyday at 01:00',
   $reportemail = 'root', $reportsuccess = false, $reportwarning = true,
   $reporthost = $reporthost, $reportuser = $reportuser,
   $reportdirectory = $reportdirectory,

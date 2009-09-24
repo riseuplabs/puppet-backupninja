@@ -20,6 +20,7 @@ backupninja::mysql { all_databases:
 	sqldump => true
 }
 
+include backupninja::client::rdiff_backup
 backupninja::rdiff { backup_all:
 	directory => '/media/backupdisk',
 	include => ['/var/backups', '/home', '/var/lib/dpkg/status'],
@@ -35,9 +36,33 @@ A remote rdiff backup handler:
         user => "backup-$hostname",
     }
 
-If you configure a backupninja::server, it will collect those users and create
-them.  We have yet to create proper authorized_keys management to make that
-process completely automatic.
+To manage the installed backup software, using puppet package
+management, you can include the backupninja::client::$backupprogram
+class (where $backupprogram is one of: rdiff_backup, maildir,
+duplicity). This will get the $backupprogram package installed
+automatically, you do not need to include this class, if you wish to
+manage the package version some other way, for example:
 
-At the moment, not all the backupninja handlers are available, they are relatively
-easy to add however.
+include backupninja::client::rdiff_backup
+include backupninja::client::maildir
+include backupninja::client::duplicity
+
+When this class is included, it will make sure that the correct
+version that is associated with puppet's 'installed' (or 'present')
+parameter is installed. If you need to specify a specific version of
+the rdiff-backup, rsync or duplicity packages, you can do so by
+specifying the variables:
+
+$rdiff_backup_ensure_version = "1.2.5-1~bpo40+1"
+$rsync_ensure_version = "3.0.6-1~bpo50+1"
+$duplicity_ensure_version = "0.6.04-1~bpo50+1"
+
+If you do not specify these variables the default 'installed/present'
+version will be installed when you include this class. 
+
+If you configure a backupninja::server, it will collect those users
+and create them.  We have yet to create proper authorized_keys
+management to make that process completely automatic.
+
+At the moment, not all the backupninja handlers are available, they
+are relatively easy to add however.

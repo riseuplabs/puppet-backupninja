@@ -4,13 +4,17 @@
 # service in Puppet.
 
 <%= 'options = ' + options if options %>
+<%= 'nicelevel = ' + nicelevel if nicelevel %>
+<%= 'testconnect = ' + testconnect if testconnect %>
+<%= 'tmpdir = ' + tmpdir if tmpdir %>
 
-<%= extras if extras %>
+[gpg]
+<%= 'sign = ' + sign if sign %>
+<%= 'encryptkey = ' + encryptkey if encryptkey %>
+<%= 'signkey = ' + signkey if signkey %>
+<%= 'password = ' + password if password %>
 
 [source]
-type = local
-<%= 'keep = ' + keep if keep %>
-
 <% if include.is_a? String -%>
 <%= 'include = ' + include %>
 <% elsif include.is_a? Array -%>
@@ -30,9 +34,10 @@ type = local
 <% end -%>
 
 [dest]
-<%- %w{type host directory user sshoptions}.each do |v|
-    if has_variable?(v) and instance_variable_get("@#{v}").to_s != "false" -%>
-<%= v + ' = ' + instance_variable_get("@#{v}").to_s %>
-<%-
-    end
-end -%>
+<%= 'incremental = ' + incremental if incremental %>
+<%= 'keep = ' + keep if keep %>
+<%= 'bandwithlimit = ' + bandwithlimit if bandwithlimit %>
+<%= 'sshoptions = ' + sshoptions if sshoptions %>
+<%= 'destdir = ' + destdir if destdir %>
+<%= 'desthost = ' + desthost if desthost %>
+<%= 'destuser = ' + destuser if destuser %>

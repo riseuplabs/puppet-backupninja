@@ -14,13 +14,13 @@ define backupninja::sh($order = 50,
                            $ensure = present,
                            $command_string
                           ) {
-                          include backupninja::client
-	file { "${backupninja::client::configdir}/${order}_${name}.sh":
+                          include backupninja::client::defaults
+	file { "${backupninja::client::defaults::configdir}/${order}_${name}.sh":
 		ensure => $ensure,
 		content => template('backupninja/sh.conf.erb'),
 		owner => root,
 		group => root,
 		mode => 0600,
-		require => File["${backupninja::client::configdir}"]
+		require => File["${backupninja::client::defaults::configdir}"]
 	}
 }
