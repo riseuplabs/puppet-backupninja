@@ -32,7 +32,6 @@ define backupninja::rdiff(
       default => $backuptag
   }
 
-  $directory = "$home/rdiff-backup/"
   include backupninja::client::defaults
 
   case $type {
@@ -40,13 +39,14 @@ define backupninja::rdiff(
       case $host { false: { err("need to define a host for remote backups!") } }
       
       $real_home = $home ? {
-        false => $directory,
+        false => "/home/${user}-${name}",
         default => $home,
       }
+      $directory = "$real_home/rdiff-backup/"
 
       backupninja::server::sandbox
       {
-        "${user}-${name}": user => $user, host => $fqdn, dir => $home,
+        "${user}-${name}": user => $user, host => $fqdn, dir => $real_home,
         manage_ssh_dir => $ssh_dir_manage, ssh_dir => $ssh_dir, key => $key,
         authorized_keys_file => $authorized_keys_file, installuser => $installuser,
         backuptag => $real_backuptag, keytype => $backupkeytype, backupkeys => $backupkeystore,
