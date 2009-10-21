@@ -120,7 +120,7 @@ class backupninja::server {
 	  }
 	  default: {
 	    @@ssh_authorized_key{ $real_user:
-	      type => $key_type,
+	      type => $keytype,
               key => $key,
 	      user => $real_user,
 	      target => "${real_ssh_dir}/${real_authorized_keys_file}",
