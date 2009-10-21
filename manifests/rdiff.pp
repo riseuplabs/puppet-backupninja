@@ -27,17 +27,16 @@ define backupninja::rdiff(
   $ssh_dir = false, $authorized_keys_file = false, $installuser = true, $installkey = true, $key = false,
   $backuptag = false, $home = false, $backupkeytype = "rsa", $backupkeystore = false, $extras = false)
 {
-  $real_backuptag = $backuptag ? {
-      false => "backupninja-$host",
-      default => $backuptag
-  }
-
   include backupninja::client::defaults
 
   case $type {
     'remote': {
       case $host { false: { err("need to define a host for remote backups!") } }
-      
+      $real_backuptag = $backuptag ? {
+          false => "backupninja-$host",
+          default => $backuptag
+      }
+
       $real_home = $home ? {
         false => "/home/${user}-${name}",
         default => $home,
