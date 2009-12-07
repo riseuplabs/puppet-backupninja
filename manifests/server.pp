@@ -22,14 +22,14 @@ class backupninja::server {
     ensure => "directory",
     mode => 0710, owner => root, group => "backupninjas"
   }
-  
-  file { "/usr/local/bin/checkbackups":
-    ensure => "present",
-    source => "puppet://$servername/backupninja/checkbackups.pl",
-    mode => 0755, owner => root, group => root,
-  }
 
   if $nagios_server {
+    file { "/usr/local/bin/checkbackups":
+      ensure => "present",
+      source => "puppet://$servername/backupninja/checkbackups.pl",
+      mode => 0755, owner => root, group => root,
+    }
+
     cron { checkbackups:
       command => "/usr/local/bin/checkbackups -d $real_backupdir | /usr/sbin/send_nsca -H $real_nagios_server -c /etc/send_nsca.cfg | grep -v 'sent to host successfully'",
       user => "root",
