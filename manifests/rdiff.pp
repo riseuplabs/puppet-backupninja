@@ -27,7 +27,7 @@ define backupninja::rdiff(
   $ssh_dir = false, $authorized_keys_file = false, $installuser = true, $installkey = true, $key = false,
   $backuptag = false, $home = false, $backupkeytype = "rsa", $backupkeystore = false, $extras = false)
 {
-  include backupninja::client::defaults
+  include backupninja::client::rdiff-backup
 
   case $type {
     'remote': {
@@ -68,14 +68,5 @@ define backupninja::rdiff(
     mode => 0600,
     require => File["${backupninja::client::defaults::configdir}"]
   }
-  include backupninja::rdiff-installed
-}
-
-class backupninja::rdiff-installed {
-  case $lsbdistcodename {
-    "etch": { $version = "1.2.5-1~bpo40+1" }
-    default: { $version = "installed" }
-  }
-  package { "rdiff-backup": ensure => $version }
 }
   

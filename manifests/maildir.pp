@@ -22,7 +22,7 @@ define backupninja::maildir(
   $remove = false, $multiconnection = yes, $keepdaily='4', $keepweekly='2',
   $keepmonthly='2')
 {
-  include backupninja::client::defaults
+  include backupninja::client::maildir
                           
   case $srcdir { false: { err("need to define a source directory to backup!") } }
   case $destdir { false: { err("need to define a destination directory to backup!") } }
@@ -38,5 +38,4 @@ define backupninja::maildir(
     mode => 0600,
     require => File["${backupninja::client::defaults::configdir}"]
   }
-  package { rsync: ensure => installed }
 }
