@@ -43,8 +43,12 @@ class backupninja::server {
   File <<| tag == "backupninja-$real_backupserver_tag" |>>
   Ssh_authorized_key <<| tag == "backupninja-$real_backupserver_tag" |>>
 
-  package { "rsync": ensure => installed }
-  include backupninja::rdiff-installed
+  if !defined(Package["rsync"]) {
+    if $rsync_ensure_version == '' { $rsync_ensure_version = 'installed' }
+    package { 'rsync':
+      ensure => $rsync_ensure_version,
+    }
+  } 
 
   # this define allows nodes to declare a remote backup sandbox, that have to
   # get created on the server
