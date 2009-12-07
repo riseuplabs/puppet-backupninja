@@ -16,36 +16,39 @@
 #      directories.
 # 
 define backupninja::rdiff(
-  $order = 90, $ensure = present, $user = false, $directory = false, $host = false,
+  $order = 90, $ensure = present, $user = false, $home = false, $host = false,
   $type = 'local',
   $exclude = [ "/home/*/.gnupg", "/home/*/.local/share/Trash", "/home/*/.Trash",
                "/home/*/.thumbnails", "/home/*/.beagle", "/home/*/.aMule",
                "/home/*/gtk-gnutella-downloads" ],
   $include = [ "/var/spool/cron/crontabs", "/var/backups", "/etc", "/root",
                "/home", "/usr/local/*bin", "/var/lib/dpkg/status*" ],
-  $vsinclude = false, $keep = 30, $sshoptions = false, $options = false, $ssh_dir_manage = true,
-  $ssh_dir = false, $authorized_keys_file = false, $installuser = true, $installkey = true,
-  $backuptag = false, $home = false, $backupkeytype = "rsa", $backupkeystore = false)
+  $vsinclude = false, $keep = 30, $sshoptions = false, $options = '--force', $ssh_dir_manage = true,
+  $ssh_dir = false, $authorized_keys_file = false, $installuser = true, $installkey = true, $key = false,
+  $backuptag = false, $home = false, $backupkeytype = "rsa", $backupkeystore = false, $extras = false)
 {
-  include backupninja::client::defaults
+  include backupninja::client::rdiff-backup
 
-  case $directory { false: { err("need to define a directory for where the backups should go!") } }
-  
   case $type {
     'remote': {
       case $host { false: { err("need to define a host for remote backups!") } }
-      
+      $real_backuptag = $backuptag ? {
+          false => "backupninja-$host",
+          default => $backuptag
+      }
+
       $real_home = $home ? {
-        false => $directory,
+        false => "/home/${user}-${name}",
         default => $home,
       }
+      $directory = "$real_home/rdiff-backup/"
 
       backupninja::server::sandbox
       {
-        "${user}-${name}": user => $user, host => $host, dir => $real_home,
-        manage_ssh_dir => $ssh_dir_manage, ssh_dir => $ssh_dir,
+        "${user}-${name}": user => $user, host => $fqdn, dir => $real_home,
+        manage_ssh_dir => $ssh_dir_manage, ssh_dir => $ssh_dir, key => $key,
         authorized_keys_file => $authorized_keys_file, installuser => $installuser,
-        backuptag => $backuptag, keytype => $backupkeytype, backupkeys => $backupkeystore,
+        backuptag => $real_backuptag, keytype => $backupkeytype, backupkeys => $backupkeystore,
       }
      
       backupninja::client::key

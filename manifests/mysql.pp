@@ -17,9 +17,15 @@
 define backupninja::mysql(
   $order = 10, $ensure = present, $user = false, $dbusername = false, $dbpassword = false,
   $dbhost = 'localhost', $databases = 'all', $backupdir = false, $hotcopy = false,
-  $sqldump = false, $compress = false, $configfile = '/etc/mysql/debian.cnf',
+  $sqldump = false, $compress = false, $configfile = true,
   $vsname = false)
 {
+  
+  $real_configfile = $configfile ? {
+    true => "/etc/mysql/debian.cnf",
+    default => $configfile,
+  }
+
   include backupninja::client::defaults
   file { "${backupninja::client::defaults::configdir}/${order}_${name}.mysql":
     ensure => $ensure,
