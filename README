@@ -66,3 +66,13 @@ management to make that process completely automatic.
 
 At the moment, not all the backupninja handlers are available, they
 are relatively easy to add however.
+
+Nagios alerts about backup freshness
+------------------------------------
+
+If you set the $nagios_server variable to be the name of your nagios server,
+then a passive nagios service gets setup so that the backup server pushes
+checks, via a cronjob that calls /usr/local/bin/checkbackups.pl, to the
+nagios server to alert about relative backup freshness.
+
+Note: this $nagios_server variable must be set before the class is included.

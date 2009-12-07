@@ -12,7 +12,7 @@ class backupninja::server {
     '' => $fqdn,
     default => $backupserver_tag
   }
-
+  
   group { "backupninjas":
     ensure => "present",
     gid => 700
@@ -29,12 +29,14 @@ class backupninja::server {
     mode => 0755, owner => root, group => root,
   }
 
-  cron { checkbackups:
-    command => "/usr/local/bin/checkbackups -d $real_backupdir | /usr/sbin/send_nsca -H nagios.koumbit.net -c /etc/send_nsca.cfg | grep -v 'sent to host successfully'",
-    user => "root",
-    hour => "8-23",
-    minute => 59,
-    require => [ File["/usr/local/bin/checkbackups"], Package['nsca'] ]
+  if $nagios_server {
+    cron { checkbackups:
+      command => "/usr/local/bin/checkbackups -d $real_backupdir | /usr/sbin/send_nsca -H $real_nagios_server -c /etc/send_nsca.cfg | grep -v 'sent to host successfully'",
+      user => "root",
+      hour => "8-23",
+      minute => 59,
+      require => [ File["/usr/local/bin/checkbackups"], Package['nsca'] ]
+    }
   }
 
   User <<| tag == "backupninja-$real_backupserver_tag" |>>
@@ -81,10 +83,12 @@ class backupninja::server {
       false => "backupninja-$real_host",
       default => $backuptag,
     }
-      
-    # configure a passive service check for backups
-    nagios2::passive_service { "backups-$real_host": nagios2_host_name => $real_host, nagios2_description => 'backups', servicegroups => "backups" }
 
+    if $nagios_server {
+      # configure a passive service check for backups
+      nagios2::passive_service { "backups-$real_host": nagios2_host_name => $real_host, nagios2_description => 'backups', servicegroups => "backups" }
+    }
+    
     if !defined(File["$real_dir"]) {
       @@file { "$real_dir":
         ensure => directory,
