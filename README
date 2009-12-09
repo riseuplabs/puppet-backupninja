@@ -10,7 +10,7 @@ If you were previously using this module, some pieces have changed,
 and you need to carefully change your use of them, or you will find
 your backups to be duplicated on your backup server. The important
 part that changed has to do with the rdiff-backup handler, if you
-weren't using that, you dont need to worry.
+weren't using that, you don't need to worry.
 
 If you were, you will need to make sure you change all of your
 "$directory" parameters to be "$home" instead, and on your
