@@ -36,7 +36,8 @@ class backupninja::client::defaults {
     ensure => '0.9.6-4';
   }
   file { $configdir:
-    ensure => directory
+    ensure => directory,
+    mode => 750, owner => 0, group => 0;
   }
 }
 
