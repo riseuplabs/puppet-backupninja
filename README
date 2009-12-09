@@ -47,28 +47,14 @@ You may also want to set some variables on your backup server, such as:
 Configure your backup clients
 -----------------------------
 
-First you must make sure that the proper backup software is installed
-on the client for the handler that you are using. To do this you can
-include the backupninja::client::$backupprogram class (where
-$backupprogram is one of: rdiff_backup, maildir, duplicity,
-rsync, sys). This will get the $backupprogram package installed
-automatically.
-
 Every handler that requires certain backup software to be installed,
-will handle the installation of that software, if you are not handling
-it elsewhere in your manifests and you include the class, the list of
-classes you can include are as follows:
-
-include backupninja::client::rdiff_backup -- installs rdiff-backup
-include backupninja::client::maildir -- installs rsync
-include backupninja::client::duplicity -- installs duplicity
-include backupninja::client::sys -- installs debconf-utils and hwinfo
-
-When one of these classes is included, it will make sure that the
-correct version that is associated with puppet's 'installed' (or
-'present') parameter is installed. If you need to specify a specific
-version of the programs that the class installs, you can specify the
-version you need installed by providing a variable, for example:
+will handle the installation of that software, as long as you are not
+handling it elsewhere in your manifests. The handler will make sure
+that the correct version that is associated with puppet's 'installed'
+(or 'present') parameter is installed. If you need to specify a
+specific version of the programs that the class installs, you can
+specify the version you need installed by providing a variable, for
+example:
 
 $rdiff_backup_ensure_version = "1.2.5-1~bpo40+1"
 $rsync_ensure_version = "3.0.6-1~bpo50+1"
