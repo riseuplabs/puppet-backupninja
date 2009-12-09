@@ -27,7 +27,7 @@ define backupninja::rdiff(
   $ssh_dir = false, $authorized_keys_file = false, $installuser = true, $installkey = true, $key = false,
   $backuptag = false, $home = false, $backupkeytype = "rsa", $backupkeystore = false, $extras = false)
 {
-  include backupninja::client::rdiff-backup
+  include backupninja::client::rdiff_backup
 
   case $type {
     'remote': {
