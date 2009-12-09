@@ -1,17 +1,99 @@
 Backupninja Module
 -------------------
 
-Configure Backupninja handlers via Puppet.
+This module helps you configure all of your backups with puppet, using 
+backupninja!
 
-Simply include backupninja (to make sure you've got the package installed)
-then configure backupninja:
+! Upgrade notice !
 
-backupninja::config { conf:
-	loglvl => 3,
-	usecolors => false
-}
+If you were previously using this module, some pieces have changed,
+and you need to carefully change your use of them, or you will find
+your backups to be duplicated on your backup server. The important
+part that changed has to do with the rdiff-backup handler, if you
+weren't using that, you dont need to worry.
 
-And setup your handlers:
+If you were, you will need to make sure you change all of your
+"$directory" parameters to be "$home" instead, and on your
+backupserver you will need to move all of your backups into
+"$home"/rdiff-backup. Previously, they were put in "$directory", which
+doubled as the home for the user that was created. This caused
+problems with rdiff-backup because of dot files and other things which
+were not part of any rdiff-backup.
+
+Getting started
+---------------
+
+First you will need to import the module:
+
+  import "backupninja"
+
+Configure your backup server
+----------------------------
+
+Now you will need to configure a backup server by adding the following
+to your node definition for that server:
+  
+  include backupninja::server
+
+By configuring a backupninja::server, this module will automatically
+create sandboxed users on the server for each client for their
+backups. 
+
+You may also want to set some variables on your backup server, such as:
+
+  $backupdir = "/backups"
+
+
+Configure your backup clients
+-----------------------------
+
+First you must make sure that the proper backup software is installed
+on the client for the handler that you are using. To do this you can
+include the backupninja::client::$backupprogram class (where
+$backupprogram is one of: rdiff_backup, maildir, duplicity,
+rsync, sys). This will get the $backupprogram package installed
+automatically.
+
+Every handler that requires certain backup software to be installed,
+will handle the installation of that software, if you are not handling
+it elsewhere in your manifests and you include the class, the list of
+classes you can include are as follows:
+
+include backupninja::client::rdiff_backup -- installs rdiff-backup
+include backupninja::client::maildir -- installs rsync
+include backupninja::client::duplicity -- installs duplicity
+include backupninja::client::sys -- installs debconf-utils and hwinfo
+
+When one of these classes is included, it will make sure that the
+correct version that is associated with puppet's 'installed' (or
+'present') parameter is installed. If you need to specify a specific
+version of the programs that the class installs, you can specify the
+version you need installed by providing a variable, for example:
+
+$rdiff_backup_ensure_version = "1.2.5-1~bpo40+1"
+$rsync_ensure_version = "3.0.6-1~bpo50+1"
+$duplicity_ensure_version = "0.6.04-1~bpo50+1"
+$debconf_utils_ensure_version = "1.5.28"
+$hwinfo_ensure_version = "16.0-2"
+
+If you do not specify these variables the default 'installed/present'
+version will be installed when you include this class.
+
+Configuring handlers
+--------------------
+
+Depending on which backup method you want to use on your client, you
+can simply specify some configuration options for that handler that are
+necessary for your client.
+
+Each handler has its own configuration options necessary to make it
+work, each of those are available as puppet parameters. You can see
+the handler documentation, or look at the handler puppet files
+included in this module to see your different options.
+
+Included below are some configuration examples for different handlers.
+
+* An example mysql handler configuration:
 
 backupninja::mysql { all_databases:
 	user => root,
@@ -20,14 +102,15 @@ backupninja::mysql { all_databases:
 	sqldump => true
 }
 
-include backupninja::client::rdiff_backup
+* An example rdiff-backup handler configuration:
+
 backupninja::rdiff { backup_all:
 	directory => '/media/backupdisk',
 	include => ['/var/backups', '/home', '/var/lib/dpkg/status'],
 	exclude => '/home/*/.gnupg'
 }
 
-A remote rdiff backup handler:
+* A remote rdiff-backup handler:
 
     backupninja::rdiff { "main":
         host => "backup.example.com",
@@ -36,43 +119,33 @@ A remote rdiff backup handler:
         user => "backup-$hostname",
     }
 
-To manage the installed backup software, using puppet package
-management, you can include the backupninja::client::$backupprogram
-class (where $backupprogram is one of: rdiff_backup, maildir,
-duplicity). This will get the $backupprogram package installed
-automatically, you do not need to include this class, if you wish to
-manage the package version some other way, for example:
 
-include backupninja::client::rdiff_backup
-include backupninja::client::maildir
-include backupninja::client::duplicity
+Configuring backupninja itself
+------------------------------
 
-When this class is included, it will make sure that the correct
-version that is associated with puppet's 'installed' (or 'present')
-parameter is installed. If you need to specify a specific version of
-the rdiff-backup, rsync or duplicity packages, you can do so by
-specifying the variables:
+You may wish to configure backupninja itself. You can do that by doing
+the following, and the /etc/backupninja.conf will be managed by
+puppet, all the backupninja configuration options are available, you
+can find them inside this module as well.
 
-$rdiff_backup_ensure_version = "1.2.5-1~bpo40+1"
-$rsync_ensure_version = "3.0.6-1~bpo50+1"
-$duplicity_ensure_version = "0.6.04-1~bpo50+1"
+For example:
 
-If you do not specify these variables the default 'installed/present'
-version will be installed when you include this class. 
+backupninja::config { conf:
+	loglvl => 3,
+	usecolors => false,
+	reportsuccess => false,
+	reportwarning => true;
+}
 
-If you configure a backupninja::server, it will collect those users
-and create them.  We have yet to create proper authorized_keys
-management to make that process completely automatic.
-
-At the moment, not all the backupninja handlers are available, they
-are relatively easy to add however.
 
 Nagios alerts about backup freshness
 ------------------------------------
 
-If you set the $nagios_server variable to be the name of your nagios server,
-then a passive nagios service gets setup so that the backup server pushes
-checks, via a cronjob that calls /usr/local/bin/checkbackups.pl, to the
-nagios server to alert about relative backup freshness.
+If you set the $nagios_server variable to be the name of your nagios
+server, then a passive nagios service gets setup so that the backup
+server pushes checks, via a cronjob that calls
+/usr/local/bin/checkbackups.pl, to the nagios server to alert about
+relative backup freshness.
 
-Note: this $nagios_server variable must be set before the class is included.
+Note: this $nagios_server variable must be set before the class is
+included.
