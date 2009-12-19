@@ -24,6 +24,13 @@ class backupninja::server {
   }
 
   if $nagios_server {
+
+    if !defined(Package["nsca"]) {
+      package { "nsca":
+        ensure => installed;
+      }
+    }
+    
     file { "/usr/local/bin/checkbackups":
       ensure => "present",
       source => "puppet://$servername/backupninja/checkbackups.pl",
