@@ -38,7 +38,7 @@ class backupninja::server {
     }
 
     cron { checkbackups:
-      command => "/usr/local/bin/checkbackups -d $real_backupdir | /usr/sbin/send_nsca -H $real_nagios_server -c /etc/send_nsca.cfg | grep -v 'sent to host successfully'",
+      command => "/usr/local/bin/checkbackups -d $real_backupdir | /usr/sbin/send_nsca -H $nagios_server -c /etc/send_nsca.cfg | grep -v 'sent to host successfully'",
       user => "root",
       hour => "8-23",
       minute => 59,
