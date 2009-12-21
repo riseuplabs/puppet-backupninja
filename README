@@ -138,6 +138,7 @@ To use this feature a few pre-requisites are necessary:
  . configure nsca on your backup server (not done via puppet yet)
  . configure nsca on your nagios server (not done via puppet yet)
  . server backup directories are named after their $fqdn
+ . using nagios2 module, nagios/nagios3 modules/nativetypes not supported yet
  . using a nagios puppet module that can create passive service checks
  . backups must be under $home/dup, $home/rdiff-backup depending on method
  . $nagios_server must be set before the class is included
