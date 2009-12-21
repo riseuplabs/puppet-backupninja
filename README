@@ -133,5 +133,12 @@ server pushes checks, via a cronjob that calls
 /usr/local/bin/checkbackups.pl, to the nagios server to alert about
 relative backup freshness.
 
-Note: this $nagios_server variable must be set before the class is
-included.
+To use this feature a few pre-requisites are necessary:
+
+ . configure nsca on your backup server (not done via puppet yet)
+ . configure nsca on your nagios server (not done via puppet yet)
+ . server backup directories are named after their $fqdn
+ . using a nagios puppet module that can create passive service checks
+ . $nagios_server must be set before the class is included
+
+
