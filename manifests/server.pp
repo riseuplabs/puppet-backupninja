@@ -62,7 +62,7 @@ class backupninja::server {
   define sandbox(
     $user = false, $host = false, $installuser = true, $dir = false, $manage_ssh_dir = true,
     $ssh_dir = false, $authorized_keys_file = false, $key = false, $keytype = 'dss', $backupkeys = false, $uid = false,
-    $gid = "backupninjas", $backuptag = false)
+    $gid = "backupninjas", $backuptag = false, $nagios2_description = "backups")
   {
     
     $real_user = $user ? {
@@ -95,9 +95,14 @@ class backupninja::server {
       default => $backuptag,
     }
 
+    $real_nagios2_description = $nagios2_description ? {
+      false => "backups",
+      default => $nagios2_description,
+    }
+
     if $nagios_server {
       # configure a passive service check for backups
-      nagios2::passive_service { "backups-$name": nagios2_host_name => $real_host, nagios2_description => 'backups', servicegroups => "backups" }
+      nagios2::passive_service { "backups-$name": nagios2_host_name => $real_host, nagios2_description => $real_nagios2_description, servicegroups => "backups" }
     }
     
     if !defined(File["$real_dir"]) {

@@ -25,7 +25,7 @@ define backupninja::rdiff(
                "/home", "/usr/local/*bin", "/var/lib/dpkg/status*" ],
   $vsinclude = false, $keep = 30, $sshoptions = false, $options = '--force', $ssh_dir_manage = true,
   $ssh_dir = false, $authorized_keys_file = false, $installuser = true, $installkey = true, $key = false,
-  $backuptag = false, $home = false, $backupkeytype = "rsa", $backupkeystore = false, $extras = false)
+  $backuptag = false, $home = false, $backupkeytype = "rsa", $backupkeystore = false, $extras = false, $nagios2_description = 'backups')
 {
   include backupninja::client::rdiff_backup
 
@@ -49,6 +49,7 @@ define backupninja::rdiff(
         manage_ssh_dir => $ssh_dir_manage, ssh_dir => $ssh_dir, key => $key,
         authorized_keys_file => $authorized_keys_file, installuser => $installuser,
         backuptag => $real_backuptag, keytype => $backupkeytype, backupkeys => $backupkeystore,
+        nagios2_description => $nagios2_description
       }
      
       backupninja::client::key
