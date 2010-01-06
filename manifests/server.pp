@@ -102,7 +102,7 @@ class backupninja::server {
 
     if $nagios_server {
       # configure a passive service check for backups
-      nagios2::passive_service { "backups-$name": nagios2_host_name => $real_host, nagios2_description => $real_nagios2_description, servicegroups => "backups" }
+      nagios2::passive_service { "backups-${name}": nagios2_host_name => $real_host, nagios2_description => $real_nagios2_description, servicegroups => "backups" }
     }
     
     if !defined(File["$real_dir"]) {
