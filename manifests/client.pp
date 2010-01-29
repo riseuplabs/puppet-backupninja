@@ -32,8 +32,11 @@ class backupninja::client::defaults {
     '' => true,
     default => $ssh_dir_manage
   }
-  package { 'backupninja':
-    ensure => '0.9.6-4';
+  if !defined(Package["backupninja"]) {
+    if $backupninja_ensure_version == '' { $backupninja_ensure_version = 'installed' }
+    package { 'backupninja':
+      ensure => $backupninja_ensure_version
+    }
   }
   file { $configdir:
     ensure => directory,
