@@ -20,8 +20,8 @@ define backupninja::sys($order = 30,
                            $dosfdisk = yes,
                            $hardware = yes,
                            $hardwarefile = '/var/backups/hardware.txt',
-                           $dohwinfo = yes
-                           $doluks = no
+                           $dohwinfo = yes,
+                           $doluks = no,
                            $dolvm = no
                           ) {
                           include backupninja::client::defaults
