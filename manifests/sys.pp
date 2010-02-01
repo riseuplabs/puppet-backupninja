@@ -21,6 +21,8 @@ define backupninja::sys($order = 30,
                            $hardware = yes,
                            $hardwarefile = '/var/backups/hardware.txt',
                            $dohwinfo = yes
+                           $doluks = no
+                           $dolvm = no
                           ) {
                           include backupninja::client::defaults
 	file { "${backupninja::client::defaults::configdir}/${order}_${name}.sys":
