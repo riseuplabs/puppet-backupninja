@@ -72,7 +72,7 @@ define backupninja::duplicity( $order  = 90,
                                # [dest]
                                $incremental   = "yes",
                                $keep          = false,
-                               $bandwithlimit = false,
+                               $bandwidthlimit = false,
                                $sshoptions    = false,
                                $destdir       = false,
                                $desthost      = false,
