@@ -13,16 +13,16 @@
 define backupninja::sys($order = 30,
                            $ensure = present,
                            $parentdir = '/var/backups',
-                           $packages = yes,
+                           $packages = true,
                            $packagesfile = '/var/backups/dpkg-selections.txt',
-                           $partitions = yes,
+                           $partitions = true,
                            $partitionsfile = '/var/backups/partitions.__star__.txt',
-                           $dosfdisk = yes,
-                           $hardware = yes,
+                           $dosfdisk = true,
+                           $hardware = true,
                            $hardwarefile = '/var/backups/hardware.txt',
-                           $dohwinfo = yes,
-                           $doluks = no,
-                           $dolvm = no
+                           $dohwinfo = true,
+                           $doluks = false,
+                           $dolvm = false
                           ) {
                           include backupninja::client::defaults
 	file { "${backupninja::client::defaults::configdir}/${order}_${name}.sys":
