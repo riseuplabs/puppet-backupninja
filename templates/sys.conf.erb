@@ -9,10 +9,10 @@
 	end
 end -%>
 
-packages = <%= packages ? 'yes' : 'no' %>
-partitions = <%= partitions ? 'yes' : 'no' %>
-dosfdisk = <%= dosfdisk ? 'yes' : 'no' %>
-hardware = <%= hardware ? 'yes' : 'no' %>
-dohwinfo = <%= dohwinfo ? 'yes' : 'no' %>
-luksheaders = <%= doluks ? 'yes' : 'no' %>
-lvm = <%= dolvm ? 'yes' : 'no' %>
+packages = <%= @packages ? 'yes' : 'no' %>
+partitions = <%= @partitions ? 'yes' : 'no' %>
+dosfdisk = <%= @dosfdisk ? 'yes' : 'no' %>
+hardware = <%= @hardware ? 'yes' : 'no' %>
+dohwinfo = <%= @dohwinfo ? 'yes' : 'no' %>
+luksheaders = <%= @doluks ? 'yes' : 'no' %>
+lvm = <%= @dolvm ? 'yes' : 'no' %>
