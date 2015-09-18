@@ -31,7 +31,7 @@ define backupninja::rdiff(
 
   case $type {
     'local': {
-      $directory = $home,
+      $directory = "$home/rdiff-backup/"
     }
     'remote': {
       case $host { false: { err("need to define a host for remote backups!") } }
