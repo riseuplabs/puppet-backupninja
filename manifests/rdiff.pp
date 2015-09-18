@@ -9,7 +9,7 @@
 #      (but be sure to keep the configdir, name, and order the same, so
 #      that we can find the correct file to remove).
 #
-#   keep, include, exclude, type, host, directory, user, sshoptions: As
+#   keep, include, exclude, type, host, home, user, sshoptions: As
 #      defined in the backupninja documentation.  The options will be placed
 #      in the correct sections automatically.  The include and exclude
 #      options should be given as arrays if you want to specify multiple
@@ -30,6 +30,9 @@ define backupninja::rdiff(
   include backupninja::client::rdiff_backup
 
   case $type {
+    'local': {
+      $directory = $home,
+    }
     'remote': {
       case $host { false: { err("need to define a host for remote backups!") } }
       $real_backuptag = $backuptag ? {
