@@ -3,30 +3,30 @@
 # the next time Puppet runs.  Please make configuration changes to this
 # service in Puppet.
 
-<%= 'options = ' + options if options %>
+<%= 'options = ' + @options if @options %>
 
-<%= extras if extras %>
+<%= @extras if @extras %>
 
 [source]
 type = local
-<%= 'keep = ' + keep if keep %>
+<%= 'keep = ' + @keep if @keep %>
 
-<% if include.is_a? String -%>
-<%= 'include = ' + include %>
-<% elsif include.is_a? Array -%>
-<%= include.map { |i| "include = #{i}" }.join("\n") %>
+<% if @include.is_a? String -%>
+<%= 'include = ' + @include %>
+<% elsif @include.is_a? Array -%>
+<%= @include.map { |i| "include = #{i}" }.join("\n") %>
 <% end -%>
 
-<% if exclude.is_a? String -%>
-<%= 'exclude = ' + exclude %>
-<% elsif exclude.is_a? Array -%>
-<%= exclude.map { |i| "exclude = #{i}" }.join("\n") %>
+<% if @exclude.is_a? String -%>
+<%= 'exclude = ' + @exclude %>
+<% elsif @exclude.is_a? Array -%>
+<%= @exclude.map { |i| "exclude = #{i}" }.join("\n") %>
 <% end -%>
 
-<% if vsinclude.is_a? String -%>
-<%= 'vsinclude = ' + vsinclude %>
-<% elsif vsinclude.is_a? Array -%>
-<%= vsinclude.map { |i| "vsinclude = #{i}" }.join("\n") %>
+<% if @vsinclude.is_a? String -%>
+<%= 'vsinclude = ' + @vsinclude %>
+<% elsif @vsinclude.is_a? Array -%>
+<%= @vsinclude.map { |i| "vsinclude = #{i}" }.join("\n") %>
 <% end -%>
 
 [dest]
